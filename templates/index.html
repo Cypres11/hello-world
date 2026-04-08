@@ -8,7 +8,18 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
   <style>
     body { background: #f8f9fa; }
-    .table td, .table th { vertical-align: middle; }
+    .table td, .table th { vertical-align: middle; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+    #contactTable { table-layout: fixed; width: 100%; }
+    th { position: relative; }
+    .col-resizer {
+      position: absolute;
+      right: 0; top: 0; bottom: 0;
+      width: 6px;
+      cursor: col-resize;
+      z-index: 1;
+      border-right: 2px solid transparent;
+    }
+    .col-resizer:hover, .col-resizer.resizing { border-right-color: #0d6efd; }
   </style>
 </head>
 <body>
@@ -56,18 +67,18 @@
   {% if contacts %}
   <div class="card shadow-sm">
     <div class="table-responsive">
-      <table class="table table-hover mb-0">
+      <table id="contactTable" class="table table-hover mb-0">
         <thead class="table-light">
           <tr>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Phone</th>
-            <th>Street address</th>
-            <th>Postal code</th>
-            <th>City</th>
-            <th>Country</th>
-            <th>Notes</th>
-            <th class="text-end">Actions</th>
+            <th data-col="name">Name</th>
+            <th data-col="email">Email</th>
+            <th data-col="phone">Phone</th>
+            <th data-col="address">Street address</th>
+            <th data-col="postal_code">Postal code</th>
+            <th data-col="city">City</th>
+            <th data-col="country">Country</th>
+            <th data-col="notes">Notes</th>
+            <th class="text-end" style="width:90px">Actions</th>
           </tr>
         </thead>
         <tbody>
@@ -80,7 +91,7 @@
             <td>{{ c.postal_code or '' }}</td>
             <td>{{ c.city or '' }}</td>
             <td>{{ c.country or '' }}</td>
-            <td class="text-muted" style="max-width:160px; white-space:pre-wrap;">{{ c.notes or '' }}</td>
+            <td class="text-muted">{{ c.notes or '' }}</td>
             <td class="text-end text-nowrap">
               <a href="{{ url_for('edit', contact_id=c.id) }}" class="btn btn-sm btn-outline-secondary me-1">
                 <i class="bi bi-pencil"></i>
@@ -154,5 +165,69 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+(function () {
+  const STORAGE_KEY = 'contactdb-col-widths';
+  const table = document.getElementById('contactTable');
+  if (!table) return;
+
+  const headers = Array.from(table.querySelectorAll('thead th[data-col]'));
+
+  // Restore saved widths
+  const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+  headers.forEach(th => {
+    const w = saved[th.dataset.col];
+    if (w) th.style.width = w + 'px';
+  });
+
+  function saveWidths() {
+    const widths = {};
+    headers.forEach(th => { widths[th.dataset.col] = th.offsetWidth; });
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(widths));
+  }
+
+  // Add a resize handle to each resizable header
+  headers.forEach(th => {
+    const handle = document.createElement('div');
+    handle.className = 'col-resizer';
+    th.appendChild(handle);
+
+    let startX, startW;
+
+    handle.addEventListener('mousedown', e => {
+      e.preventDefault();
+      startX = e.pageX;
+      startW = th.offsetWidth;
+      handle.classList.add('resizing');
+      document.body.style.cursor = 'col-resize';
+      document.body.style.userSelect = 'none';
+
+      function onMove(e) {
+        const newW = Math.max(60, startW + (e.pageX - startX));
+        th.style.width = newW + 'px';
+      }
+
+      function onUp() {
+        handle.classList.remove('resizing');
+        document.body.style.cursor = '';
+        document.body.style.userSelect = '';
+        saveWidths();
+        document.removeEventListener('mousemove', onMove);
+        document.removeEventListener('mouseup', onUp);
+      }
+
+      document.addEventListener('mousemove', onMove);
+      document.addEventListener('mouseup', onUp);
+    });
+
+    // Double-click resets this column to auto width
+    handle.addEventListener('dblclick', e => {
+      e.preventDefault();
+      th.style.width = '';
+      saveWidths();
+    });
+  });
+})();
+</script>
 </body>
 </html>
