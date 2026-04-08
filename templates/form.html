@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ action }} Contact – Contact Database</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  <style>body { background: #f8f9fa; }</style>
+</head>
+<body>
+<div class="container py-4" style="max-width: 640px;">
+
+  <a href="{{ url_for('index') }}" class="btn btn-link ps-0 mb-3">
+    <i class="bi bi-arrow-left"></i> Back to contacts
+  </a>
+
+  <div class="card shadow-sm">
+    <div class="card-header bg-primary text-white">
+      <h5 class="mb-0">
+        <i class="bi bi-person-{{ 'pencil' if contact else 'plus' }}-fill me-2"></i>{{ action }} Contact
+      </h5>
+    </div>
+    <div class="card-body">
+
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% for category, message in messages %}
+          <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+          </div>
+        {% endfor %}
+      {% endwith %}
+
+      {% set v = contact or {} %}
+      <form method="post">
+
+        <div class="mb-3">
+          <label class="form-label fw-semibold">Name <span class="text-danger">*</span></label>
+          <input type="text" name="name" class="form-control" required autofocus
+                 value="{{ v.name if v.name is defined else (v['name'] or '') if 'name' in v else '' }}">
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label fw-semibold">Email</label>
+          <input type="email" name="email" class="form-control"
+                 value="{{ v.email if v.email is defined else (v['email'] or '') if 'email' in v else '' }}">
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label fw-semibold">Phone</label>
+          <input type="tel" name="phone" class="form-control"
+                 value="{{ v.phone if v.phone is defined else (v['phone'] or '') if 'phone' in v else '' }}">
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label fw-semibold">Street address</label>
+          <input type="text" name="address" class="form-control"
+                 value="{{ v.address if v.address is defined else (v['address'] or '') if 'address' in v else '' }}">
+        </div>
+
+        <div class="row g-3 mb-3">
+          <div class="col-sm-4">
+            <label class="form-label fw-semibold">Postal code</label>
+            <input type="text" name="postal_code" class="form-control"
+                   value="{{ v.postal_code if v.postal_code is defined else (v['postal_code'] or '') if 'postal_code' in v else '' }}">
+          </div>
+          <div class="col-sm-4">
+            <label class="form-label fw-semibold">City</label>
+            <input type="text" name="city" class="form-control"
+                   value="{{ v.city if v.city is defined else (v['city'] or '') if 'city' in v else '' }}">
+          </div>
+          <div class="col-sm-4">
+            <label class="form-label fw-semibold">Country</label>
+            <input type="text" name="country" class="form-control"
+                   value="{{ v.country if v.country is defined else (v['country'] or '') if 'country' in v else '' }}">
+          </div>
+        </div>
+
+        <div class="mb-4">
+          <label class="form-label fw-semibold">Notes</label>
+          <textarea name="notes" class="form-control" rows="3">{{ v.notes if v.notes is defined else (v['notes'] or '') if 'notes' in v else '' }}</textarea>
+        </div>
+
+        <div class="d-flex gap-2">
+          <button type="submit" class="btn btn-primary">
+            <i class="bi bi-check-lg me-1"></i>{{ action }}
+          </button>
+          <a href="{{ url_for('index') }}" class="btn btn-outline-secondary">Cancel</a>
+        </div>
+
+      </form>
+    </div>
+  </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
