@@ -25,7 +25,7 @@
 
       <!-- Import trigger -->
       <button class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#importModal">
-        <i class="bi bi-upload me-1"></i>Import CSV
+        <i class="bi bi-upload me-1"></i>Import
       </button>
 
       <!-- Add contact -->
@@ -113,22 +113,40 @@
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="importModalLabel"><i class="bi bi-upload me-2"></i>Import CSV</h5>
+        <h5 class="modal-title" id="importModalLabel"><i class="bi bi-upload me-2"></i>Import contacts</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
       </div>
-      <form method="post" action="{{ url_for('import_csv') }}" enctype="multipart/form-data">
+      <form method="post" action="{{ url_for('import_contacts') }}" enctype="multipart/form-data">
         <div class="modal-body">
-          <p class="text-muted small mb-3">
-            The CSV file must have a header row. Recognised columns:<br>
-            <code>name</code>, <code>email</code>, <code>phone</code>, <code>address</code>,
-            <code>postal_code</code>, <code>city</code>, <code>country</code>, <code>notes</code><br>
-            Only <code>name</code> is required. Extra columns are ignored.
-          </p>
-          <input type="file" name="csvfile" accept=".csv" class="form-control" required>
+
+          <!-- vCard tab -->
+          <div class="mb-3 p-3 bg-light rounded border">
+            <p class="fw-semibold mb-1"><i class="bi bi-apple me-1"></i>Mac Contacten → vCard (.vcf)</p>
+            <ol class="small text-muted mb-0">
+              <li>Open de <strong>Contacten</strong>-app op je Mac</li>
+              <li>Selecteer alle contacten met <kbd>⌘A</kbd></li>
+              <li>Ga naar <strong>Archief → Exporteer → Exporteer vCard…</strong></li>
+              <li>Sla het <code>.vcf</code>-bestand op en upload het hieronder</li>
+            </ol>
+          </div>
+
+          <div class="mb-3 p-3 bg-light rounded border">
+            <p class="fw-semibold mb-1"><i class="bi bi-filetype-csv me-1"></i>CSV-bestand (.csv)</p>
+            <p class="small text-muted mb-0">
+              Het bestand moet een koptekstrij hebben met kolommen zoals
+              <code>name</code>, <code>email</code>, <code>phone</code>, <code>address</code>,
+              <code>postal_code</code>, <code>city</code>, <code>country</code>, <code>notes</code>.
+              Alleen <code>name</code> is verplicht.
+            </p>
+          </div>
+
+          <label class="form-label fw-semibold">Kies bestand (.vcf of .csv)</label>
+          <input type="file" name="csvfile" accept=".vcf,.csv" class="form-control" required>
+
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
-          <button type="submit" class="btn btn-primary"><i class="bi bi-upload me-1"></i>Import</button>
+          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Annuleer</button>
+          <button type="submit" class="btn btn-primary"><i class="bi bi-upload me-1"></i>Importeer</button>
         </div>
       </form>
     </div>

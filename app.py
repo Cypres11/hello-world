@@ -2,6 +2,7 @@ import csv
 import io
 import sqlite3
 import os
+import vobject
 from flask import Flask, render_template, request, redirect, url_for, flash, Response
 
 app = Flask(__name__)
@@ -130,37 +131,94 @@ def export_csv():
     )
 
 
-@app.route("/import", methods=["POST"])
-def import_csv():
-    file = request.files.get("csvfile")
-    if not file or not file.filename.endswith(".csv"):
-        flash("Please select a .csv file.", "danger")
-        return redirect(url_for("index"))
-
-    stream = io.StringIO(file.stream.read().decode("utf-8-sig"))
-    reader = csv.DictReader(stream)
-    # Normalise header names: lowercase + strip spaces
-    reader.fieldnames = [h.strip().lower().replace(" ", "_") for h in (reader.fieldnames or [])]
-
-    if "name" not in reader.fieldnames:
-        flash("CSV must have a 'name' column.", "danger")
-        return redirect(url_for("index"))
-
+def _insert_contacts(conn, rows):
+    """Insert a list of dicts (keyed by FIELDS) into the database."""
     added = skipped = 0
-    with get_db() as conn:
-        for row in reader:
-            name = row.get("name", "").strip()
-            if not name:
-                skipped += 1
-                continue
-            conn.execute(
-                """INSERT INTO contacts (name,email,phone,address,postal_code,city,country,notes)
-                   VALUES (?,?,?,?,?,?,?,?)""",
-                [row.get(f, "").strip() for f in FIELDS],
-            )
-            added += 1
+    for row in rows:
+        name = (row.get("name") or "").strip()
+        if not name:
+            skipped += 1
+            continue
+        conn.execute(
+            """INSERT INTO contacts (name,email,phone,address,postal_code,city,country,notes)
+               VALUES (?,?,?,?,?,?,?,?)""",
+            [(row.get(f) or "").strip() for f in FIELDS],
+        )
+        added += 1
+    return added, skipped
 
-    flash(f"Imported {added} contact(s){f', skipped {skipped} row(s) without a name' if skipped else ''}.", "success")
+
+def _parse_vcard(content):
+    """Parse a vCard string and return a list of contact dicts."""
+    rows = []
+    for vcard in vobject.readComponents(content):
+        row = {f: "" for f in FIELDS}
+        try:
+            row["name"] = str(vcard.fn.value).strip()
+        except Exception:
+            pass
+        try:
+            row["email"] = str(vcard.email.value).strip()
+        except Exception:
+            pass
+        try:
+            # Use first telephone number found
+            row["phone"] = str(vcard.tel.value).strip()
+        except Exception:
+            pass
+        try:
+            adr = vcard.adr.value
+            row["address"] = (adr.street or "").strip()
+            row["city"] = (adr.city or "").strip()
+            row["postal_code"] = (adr.code or "").strip()
+            row["country"] = (adr.country or "").strip()
+        except Exception:
+            pass
+        try:
+            row["notes"] = str(vcard.note.value).strip()
+        except Exception:
+            pass
+        rows.append(row)
+    return rows
+
+
+@app.route("/import", methods=["POST"])
+def import_contacts():
+    file = request.files.get("csvfile")
+    if not file or not file.filename:
+        flash("Please select a file.", "danger")
+        return redirect(url_for("index"))
+
+    filename = file.filename.lower()
+    content = file.stream.read()
+
+    if filename.endswith(".vcf"):
+        try:
+            rows = _parse_vcard(content.decode("utf-8-sig"))
+        except Exception as e:
+            flash(f"Could not read vCard file: {e}", "danger")
+            return redirect(url_for("index"))
+
+    elif filename.endswith(".csv"):
+        stream = io.StringIO(content.decode("utf-8-sig"))
+        reader = csv.DictReader(stream)
+        reader.fieldnames = [h.strip().lower().replace(" ", "_") for h in (reader.fieldnames or [])]
+        if "name" not in reader.fieldnames:
+            flash("CSV must have a 'name' column.", "danger")
+            return redirect(url_for("index"))
+        rows = list(reader)
+
+    else:
+        flash("Please select a .vcf (vCard) or .csv file.", "danger")
+        return redirect(url_for("index"))
+
+    with get_db() as conn:
+        added, skipped = _insert_contacts(conn, rows)
+
+    msg = f"Imported {added} contact(s)"
+    if skipped:
+        msg += f", skipped {skipped} row(s) without a name"
+    flash(msg + ".", "success")
     return redirect(url_for("index"))
 
 
