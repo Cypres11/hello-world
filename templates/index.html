@@ -11,6 +11,10 @@
     .table td, .table th { vertical-align: middle; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
     #contactTable { table-layout: fixed; width: 100%; }
     th { position: relative; }
+    th.sortable { cursor: pointer; user-select: none; }
+    th.sortable:hover { background: #e2e6ea; }
+    .sort-icon { font-size: .75rem; opacity: .4; margin-left: 4px; }
+    th.sort-asc  .sort-icon, th.sort-desc .sort-icon { opacity: 1; color: #0d6efd; }
     .col-resizer {
       position: absolute;
       right: 0; top: 0; bottom: 0;
@@ -20,6 +24,7 @@
       border-right: 2px solid transparent;
     }
     .col-resizer:hover, .col-resizer.resizing { border-right-color: #0d6efd; }
+    th.cb-col, td.cb-col { width: 36px; min-width: 36px; text-overflow: clip; }
   </style>
 </head>
 <body>
@@ -27,7 +32,12 @@
 
   <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
     <h1 class="h3 mb-0"><i class="bi bi-person-lines-fill me-2 text-primary"></i>Contact Database</h1>
-    <div class="d-flex flex-wrap gap-2">
+    <div class="d-flex flex-wrap gap-2 align-items-center">
+
+      <!-- Bulk delete (shown when rows are selected) -->
+      <button id="btnDeleteSelected" class="btn btn-danger d-none" onclick="confirmBulkDelete()">
+        <i class="bi bi-trash me-1"></i>Delete selected (<span id="selCount">0</span>)
+      </button>
 
       <!-- Export -->
       <a href="{{ url_for('export_csv') }}" class="btn btn-outline-success">
@@ -70,21 +80,25 @@
       <table id="contactTable" class="table table-hover mb-0">
         <thead class="table-light">
           <tr>
-            <th data-col="first_name">First name</th>
-            <th data-col="last_name">Last name</th>
-            <th data-col="email">Email</th>
-            <th data-col="phone">Phone</th>
-            <th data-col="address">Street address</th>
-            <th data-col="postal_code">Postal code</th>
-            <th data-col="city">City</th>
-            <th data-col="country">Country</th>
-            <th data-col="notes">Notes</th>
+            <th class="cb-col">
+              <input type="checkbox" class="form-check-input" id="selectAll" title="Select all">
+            </th>
+            <th class="sortable" data-col="first_name">First name <i class="bi bi-arrow-down-up sort-icon"></i></th>
+            <th class="sortable" data-col="last_name">Last name <i class="bi bi-arrow-down-up sort-icon"></i></th>
+            <th class="sortable" data-col="email">Email <i class="bi bi-arrow-down-up sort-icon"></i></th>
+            <th class="sortable" data-col="phone">Phone <i class="bi bi-arrow-down-up sort-icon"></i></th>
+            <th class="sortable" data-col="address">Street address <i class="bi bi-arrow-down-up sort-icon"></i></th>
+            <th class="sortable" data-col="postal_code">Postal code <i class="bi bi-arrow-down-up sort-icon"></i></th>
+            <th class="sortable" data-col="city">City <i class="bi bi-arrow-down-up sort-icon"></i></th>
+            <th class="sortable" data-col="country">Country <i class="bi bi-arrow-down-up sort-icon"></i></th>
+            <th class="sortable" data-col="notes">Notes <i class="bi bi-arrow-down-up sort-icon"></i></th>
             <th class="text-end" style="width:90px">Actions</th>
           </tr>
         </thead>
         <tbody>
           {% for c in contacts %}
-          <tr>
+          <tr data-id="{{ c.id }}">
+            <td class="cb-col"><input type="checkbox" class="form-check-input row-cb"></td>
             <td class="fw-semibold">{{ c.first_name or '' }}</td>
             <td class="fw-semibold">{{ c.last_name or '' }}</td>
             <td>{% if c.email %}<a href="mailto:{{ c.email }}">{{ c.email }}</a>{% endif %}</td>
@@ -121,6 +135,9 @@
 
 </div>
 
+<!-- Hidden bulk-delete form -->
+<form id="bulkDeleteForm" method="post" action="{{ url_for('delete_bulk') }}"></form>
+
 <!-- Import modal -->
 <div class="modal fade" id="importModal" tabindex="-1" aria-labelledby="importModalLabel" aria-hidden="true">
   <div class="modal-dialog">
@@ -132,7 +149,6 @@
       <form method="post" action="{{ url_for('import_contacts') }}" enctype="multipart/form-data">
         <div class="modal-body">
 
-          <!-- vCard tab -->
           <div class="mb-3 p-3 bg-light rounded border">
             <p class="fw-semibold mb-1"><i class="bi bi-apple me-1"></i>Mac Contacten → vCard (.vcf)</p>
             <ol class="small text-muted mb-0">
@@ -147,9 +163,9 @@
             <p class="fw-semibold mb-1"><i class="bi bi-filetype-csv me-1"></i>CSV-bestand (.csv)</p>
             <p class="small text-muted mb-0">
               Het bestand moet een koptekstrij hebben met kolommen zoals
-              <code>name</code>, <code>email</code>, <code>phone</code>, <code>address</code>,
+              <code>first_name</code>, <code>last_name</code>, <code>email</code>, <code>phone</code>, <code>address</code>,
               <code>postal_code</code>, <code>city</code>, <code>country</code>, <code>notes</code>.
-              Alleen <code>name</code> is verplicht.
+              Alleen naam is verplicht.
             </p>
           </div>
 
@@ -173,42 +189,37 @@
   const table = document.getElementById('contactTable');
   if (!table) return;
 
-  const headers = Array.from(table.querySelectorAll('thead th[data-col]'));
+  /* ── Resizable columns ── */
+  const resizableHeaders = Array.from(table.querySelectorAll('thead th[data-col]'));
 
-  // Restore saved widths
   const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
-  headers.forEach(th => {
+  resizableHeaders.forEach(th => {
     const w = saved[th.dataset.col];
     if (w) th.style.width = w + 'px';
   });
 
   function saveWidths() {
     const widths = {};
-    headers.forEach(th => { widths[th.dataset.col] = th.offsetWidth; });
+    resizableHeaders.forEach(th => { widths[th.dataset.col] = th.offsetWidth; });
     localStorage.setItem(STORAGE_KEY, JSON.stringify(widths));
   }
 
-  // Add a resize handle to each resizable header
-  headers.forEach(th => {
+  resizableHeaders.forEach(th => {
     const handle = document.createElement('div');
     handle.className = 'col-resizer';
     th.appendChild(handle);
 
     let startX, startW;
-
     handle.addEventListener('mousedown', e => {
       e.preventDefault();
+      e.stopPropagation(); // don't trigger sort
       startX = e.pageX;
       startW = th.offsetWidth;
       handle.classList.add('resizing');
       document.body.style.cursor = 'col-resize';
       document.body.style.userSelect = 'none';
 
-      function onMove(e) {
-        const newW = Math.max(60, startW + (e.pageX - startX));
-        th.style.width = newW + 'px';
-      }
-
+      function onMove(e) { th.style.width = Math.max(60, startW + (e.pageX - startX)) + 'px'; }
       function onUp() {
         handle.classList.remove('resizing');
         document.body.style.cursor = '';
@@ -217,18 +228,85 @@
         document.removeEventListener('mousemove', onMove);
         document.removeEventListener('mouseup', onUp);
       }
-
       document.addEventListener('mousemove', onMove);
       document.addEventListener('mouseup', onUp);
     });
 
-    // Double-click resets this column to auto width
-    handle.addEventListener('dblclick', e => {
-      e.preventDefault();
-      th.style.width = '';
-      saveWidths();
+    handle.addEventListener('dblclick', e => { e.preventDefault(); th.style.width = ''; saveWidths(); });
+  });
+
+  /* ── Sortable columns ── */
+  const sortState = { th: null, dir: 1 };
+
+  table.querySelectorAll('thead th.sortable').forEach(th => {
+    th.addEventListener('click', () => {
+      const colIndex = th.cellIndex;
+      if (sortState.th === th) {
+        sortState.dir *= -1;
+      } else {
+        if (sortState.th) {
+          sortState.th.classList.remove('sort-asc', 'sort-desc');
+          sortState.th.querySelector('.sort-icon').className = 'bi bi-arrow-down-up sort-icon';
+        }
+        sortState.th = th;
+        sortState.dir = 1;
+      }
+      th.classList.toggle('sort-asc',  sortState.dir === 1);
+      th.classList.toggle('sort-desc', sortState.dir === -1);
+      th.querySelector('.sort-icon').className =
+        sortState.dir === 1 ? 'bi bi-arrow-up sort-icon' : 'bi bi-arrow-down sort-icon';
+
+      const tbody = table.querySelector('tbody');
+      Array.from(tbody.querySelectorAll('tr'))
+        .sort((a, b) => {
+          const av = a.cells[colIndex].textContent.trim().toLowerCase();
+          const bv = b.cells[colIndex].textContent.trim().toLowerCase();
+          return av.localeCompare(bv, undefined, { numeric: true }) * sortState.dir;
+        })
+        .forEach(r => tbody.appendChild(r));
     });
   });
+
+  /* ── Checkbox & bulk delete ── */
+  const selectAll      = document.getElementById('selectAll');
+  const btnDel         = document.getElementById('btnDeleteSelected');
+  const selCountSpan   = document.getElementById('selCount');
+  const bulkForm       = document.getElementById('bulkDeleteForm');
+
+  function updateBulkBar() {
+    const checked = table.querySelectorAll('tbody .row-cb:checked');
+    const n = checked.length;
+    selCountSpan.textContent = n;
+    btnDel.classList.toggle('d-none', n === 0);
+    const total = table.querySelectorAll('tbody .row-cb').length;
+    selectAll.checked = n === total && total > 0;
+    selectAll.indeterminate = n > 0 && n < total;
+  }
+
+  selectAll.addEventListener('change', () => {
+    table.querySelectorAll('tbody .row-cb').forEach(cb => cb.checked = selectAll.checked);
+    updateBulkBar();
+  });
+
+  table.querySelector('tbody').addEventListener('change', e => {
+    if (e.target.classList.contains('row-cb')) updateBulkBar();
+  });
+
+  window.confirmBulkDelete = function () {
+    const checked = Array.from(table.querySelectorAll('tbody .row-cb:checked'));
+    if (!checked.length) return;
+    if (!confirm(`Delete ${checked.length} contact(s)? This cannot be undone.`)) return;
+    // Populate hidden form with selected IDs
+    bulkForm.innerHTML = '';
+    checked.forEach(cb => {
+      const id = cb.closest('tr').dataset.id;
+      const inp = document.createElement('input');
+      inp.type = 'hidden'; inp.name = 'ids'; inp.value = id;
+      bulkForm.appendChild(inp);
+    });
+    bulkForm.submit();
+  };
+
 })();
 </script>
 </body>

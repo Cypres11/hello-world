@@ -138,6 +138,16 @@ def delete(contact_id):
     return redirect(url_for("index"))
 
 
+@app.route("/delete-bulk", methods=["POST"])
+def delete_bulk():
+    ids = [i for i in request.form.getlist("ids") if i.isdigit()]
+    if ids:
+        with get_db() as conn:
+            conn.executemany("DELETE FROM contacts WHERE id=?", [(int(i),) for i in ids])
+        flash(f"Deleted {len(ids)} contact(s).", "success")
+    return redirect(url_for("index"))
+
+
 @app.route("/export")
 def export_csv():
     with get_db() as conn:
