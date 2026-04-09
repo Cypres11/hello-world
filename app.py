@@ -10,7 +10,7 @@ app.secret_key = "change-me-in-production"
 
 DB_PATH = os.path.join(os.path.dirname(__file__), "contacts.db")
 
-FIELDS = ["name", "email", "phone", "address", "postal_code", "city", "country", "notes"]
+FIELDS = ["first_name", "last_name", "email", "phone", "address", "postal_code", "city", "country", "notes"]
 
 
 def get_db():
@@ -24,7 +24,8 @@ def init_db():
         conn.execute("""
             CREATE TABLE IF NOT EXISTS contacts (
                 id          INTEGER PRIMARY KEY AUTOINCREMENT,
-                name        TEXT NOT NULL,
+                first_name  TEXT,
+                last_name   TEXT,
                 email       TEXT,
                 phone       TEXT,
                 address     TEXT,
@@ -34,11 +35,30 @@ def init_db():
                 notes       TEXT
             )
         """)
-        # Migrate existing databases that are missing the new columns
         existing = {row[1] for row in conn.execute("PRAGMA table_info(contacts)")}
-        for col in ("postal_code", "city", "country"):
+
+        # Add any missing columns (migrates older databases)
+        for col in ("first_name", "last_name", "postal_code", "city", "country"):
             if col not in existing:
                 conn.execute(f"ALTER TABLE contacts ADD COLUMN {col} TEXT")
+
+        # Migrate old single 'name' column → first_name / last_name
+        if "name" in existing:
+            rows = conn.execute(
+                "SELECT id, name FROM contacts WHERE first_name IS NULL AND last_name IS NULL AND name IS NOT NULL"
+            ).fetchall()
+            for row in rows:
+                parts = (row["name"] or "").strip().rsplit(" ", 1)
+                first = parts[0] if len(parts) == 2 else parts[0]
+                last = parts[1] if len(parts) == 2 else ""
+                conn.execute(
+                    "UPDATE contacts SET first_name=?, last_name=? WHERE id=?",
+                    (first, last, row["id"]),
+                )
+
+
+def _display_name(row):
+    return " ".join(filter(None, [row.get("first_name", ""), row.get("last_name", "")])) or "—"
 
 
 def _form_values():
@@ -53,13 +73,16 @@ def index():
             like = f"%{query}%"
             rows = conn.execute(
                 """SELECT * FROM contacts
-                   WHERE name LIKE ? OR email LIKE ? OR phone LIKE ?
+                   WHERE first_name LIKE ? OR last_name LIKE ?
+                      OR email LIKE ? OR phone LIKE ?
                       OR city LIKE ? OR country LIKE ?
-                   ORDER BY name""",
-                (like, like, like, like, like),
+                   ORDER BY last_name, first_name""",
+                (like, like, like, like, like, like),
             ).fetchall()
         else:
-            rows = conn.execute("SELECT * FROM contacts ORDER BY name").fetchall()
+            rows = conn.execute(
+                "SELECT * FROM contacts ORDER BY last_name, first_name"
+            ).fetchall()
     return render_template("index.html", contacts=rows, query=query)
 
 
@@ -67,16 +90,16 @@ def index():
 def add():
     if request.method == "POST":
         vals = _form_values()
-        if not vals["name"]:
-            flash("Name is required.", "danger")
+        if not vals["first_name"] and not vals["last_name"]:
+            flash("At least a first name or last name is required.", "danger")
             return render_template("form.html", contact=vals, action="Add")
         with get_db() as conn:
             conn.execute(
-                """INSERT INTO contacts (name,email,phone,address,postal_code,city,country,notes)
-                   VALUES (?,?,?,?,?,?,?,?)""",
+                """INSERT INTO contacts (first_name,last_name,email,phone,address,postal_code,city,country,notes)
+                   VALUES (?,?,?,?,?,?,?,?,?)""",
                 [vals[f] for f in FIELDS],
             )
-        flash(f'Contact "{vals["name"]}" added.', "success")
+        flash(f'Contact "{vals["first_name"]} {vals["last_name"]}" added.', "success")
         return redirect(url_for("index"))
     return render_template("form.html", contact=None, action="Add")
 
@@ -90,17 +113,17 @@ def edit(contact_id):
         return redirect(url_for("index"))
     if request.method == "POST":
         vals = _form_values()
-        if not vals["name"]:
-            flash("Name is required.", "danger")
+        if not vals["first_name"] and not vals["last_name"]:
+            flash("At least a first name or last name is required.", "danger")
             return render_template("form.html", contact=contact, action="Save")
         with get_db() as conn:
             conn.execute(
                 """UPDATE contacts
-                   SET name=?,email=?,phone=?,address=?,postal_code=?,city=?,country=?,notes=?
+                   SET first_name=?,last_name=?,email=?,phone=?,address=?,postal_code=?,city=?,country=?,notes=?
                    WHERE id=?""",
                 [vals[f] for f in FIELDS] + [contact_id],
             )
-        flash(f'Contact "{vals["name"]}" updated.', "success")
+        flash(f'Contact "{vals["first_name"]} {vals["last_name"]}" updated.', "success")
         return redirect(url_for("index"))
     return render_template("form.html", contact=contact, action="Save")
 
@@ -108,17 +131,17 @@ def edit(contact_id):
 @app.route("/delete/<int:contact_id>", methods=["POST"])
 def delete(contact_id):
     with get_db() as conn:
-        row = conn.execute("SELECT name FROM contacts WHERE id=?", (contact_id,)).fetchone()
+        row = conn.execute("SELECT first_name, last_name FROM contacts WHERE id=?", (contact_id,)).fetchone()
         if row:
             conn.execute("DELETE FROM contacts WHERE id=?", (contact_id,))
-            flash(f'Contact "{row["name"]}" deleted.', "success")
+            flash(f'Contact "{row["first_name"]} {row["last_name"]}" deleted.', "success")
     return redirect(url_for("index"))
 
 
 @app.route("/export")
 def export_csv():
     with get_db() as conn:
-        rows = conn.execute("SELECT * FROM contacts ORDER BY name").fetchall()
+        rows = conn.execute("SELECT * FROM contacts ORDER BY last_name, first_name").fetchall()
     buf = io.StringIO()
     writer = csv.writer(buf)
     writer.writerow(FIELDS)
@@ -132,37 +155,49 @@ def export_csv():
 
 
 def _insert_contacts(conn, rows):
-    """Insert a list of dicts (keyed by FIELDS) into the database."""
     added = skipped = 0
     for row in rows:
-        name = (row.get("name") or "").strip()
-        if not name:
+        first = (row.get("first_name") or row.get("name") or "").strip()
+        last = (row.get("last_name") or "").strip()
+        # If only a combined 'name' key exists, split it
+        if not first and not last and row.get("name"):
+            parts = row["name"].strip().rsplit(" ", 1)
+            first = parts[0]
+            last = parts[1] if len(parts) == 2 else ""
+        if not first and not last:
             skipped += 1
             continue
         conn.execute(
-            """INSERT INTO contacts (name,email,phone,address,postal_code,city,country,notes)
-               VALUES (?,?,?,?,?,?,?,?)""",
-            [(row.get(f) or "").strip() for f in FIELDS],
+            """INSERT INTO contacts (first_name,last_name,email,phone,address,postal_code,city,country,notes)
+               VALUES (?,?,?,?,?,?,?,?,?)""",
+            [first, last] + [(row.get(f) or "").strip() for f in FIELDS[2:]],
         )
         added += 1
     return added, skipped
 
 
 def _parse_vcard(content):
-    """Parse a vCard string and return a list of contact dicts."""
     rows = []
     for vcard in vobject.readComponents(content):
         row = {f: "" for f in FIELDS}
+        # Prefer structured N: field for first/last name
         try:
-            row["name"] = str(vcard.fn.value).strip()
+            n = vcard.n.value
+            row["first_name"] = (n.given or "").strip()
+            row["last_name"] = (n.family or "").strip()
         except Exception:
-            pass
+            try:
+                # Fall back to splitting FN
+                parts = str(vcard.fn.value).strip().rsplit(" ", 1)
+                row["first_name"] = parts[0]
+                row["last_name"] = parts[1] if len(parts) == 2 else ""
+            except Exception:
+                pass
         try:
             row["email"] = str(vcard.email.value).strip()
         except Exception:
             pass
         try:
-            # Use first telephone number found
             row["phone"] = str(vcard.tel.value).strip()
         except Exception:
             pass
@@ -203,9 +238,6 @@ def import_contacts():
         stream = io.StringIO(content.decode("utf-8-sig"))
         reader = csv.DictReader(stream)
         reader.fieldnames = [h.strip().lower().replace(" ", "_") for h in (reader.fieldnames or [])]
-        if "name" not in reader.fieldnames:
-            flash("CSV must have a 'name' column.", "danger")
-            return redirect(url_for("index"))
         rows = list(reader)
 
     else:

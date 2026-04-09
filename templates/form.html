@@ -35,11 +35,19 @@
       {% set v = contact or {} %}
       <form method="post">
 
-        <div class="mb-3">
-          <label class="form-label fw-semibold">Name <span class="text-danger">*</span></label>
-          <input type="text" name="name" class="form-control" required autofocus
-                 value="{{ v.name if v.name is defined else (v['name'] or '') if 'name' in v else '' }}">
+        <div class="row g-3 mb-3">
+          <div class="col-sm-6">
+            <label class="form-label fw-semibold">First name <span class="text-danger">*</span></label>
+            <input type="text" name="first_name" class="form-control" autofocus
+                   value="{{ v.first_name if v.first_name is defined else (v['first_name'] or '') if 'first_name' in v else '' }}">
+          </div>
+          <div class="col-sm-6">
+            <label class="form-label fw-semibold">Last name <span class="text-danger">*</span></label>
+            <input type="text" name="last_name" class="form-control"
+                   value="{{ v.last_name if v.last_name is defined else (v['last_name'] or '') if 'last_name' in v else '' }}">
+          </div>
         </div>
+        <p class="text-muted small mt-n2 mb-3">At least one of first name or last name is required.</p>
 
         <div class="mb-3">
           <label class="form-label fw-semibold">Email</label>
