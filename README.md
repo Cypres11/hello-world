@@ -1,3 +1,3 @@
 # hello-world
-een eerste poging om meer te leren over coding
-retired engineer learning github
+een eerste poging om meer te leren over github en claude, 
+retired engineer learning to code
