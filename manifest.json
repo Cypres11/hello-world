@@ -1,0 +1,17 @@
+{
+  "name": "Contact Database",
+  "short_name": "Contacts",
+  "description": "Personal contact database — works offline",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#f8f9fa",
+  "theme_color": "#0d6efd",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
