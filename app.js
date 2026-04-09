@@ -16,7 +16,7 @@
 
 // The fields in the order we want them in exports/imports
 const FIELDS = [
-  'first_name', 'last_name', 'email', 'phone',
+  'first_name', 'last_name', 'category', 'email', 'phone',
   'address', 'postal_code', 'city', 'country', 'notes'
 ];
 
@@ -346,7 +346,7 @@ const App = (() => {
     // Filter
     displayed = q
       ? allContacts.filter(c =>
-          ['first_name','last_name','email','phone','city','country']
+          ['first_name','last_name','category','email','phone','city','country']
             .some(f => (c[f] || '').toLowerCase().includes(q))
         )
       : [...allContacts];
@@ -426,6 +426,7 @@ const App = (() => {
         </td>
         <td class="fw-semibold">${esc(c.first_name)}</td>
         <td class="fw-semibold">${esc(c.last_name)}</td>
+        <td>${esc(c.category)}</td>
         <td>${c.email  ? `<a href="mailto:${esc(c.email)}">${esc(c.email)}</a>` : ''}</td>
         <td>${c.phone  ? `<a href="tel:${esc(c.phone)}">${esc(c.phone)}</a>`   : ''}</td>
         <td>${esc(c.address)}</td>
@@ -477,6 +478,7 @@ const App = (() => {
     document.getElementById('editId').value = id;
     document.getElementById('fFirstName').value  = c.first_name  || '';
     document.getElementById('fLastName').value   = c.last_name   || '';
+    document.getElementById('fCategory').value   = c.category    || '';
     document.getElementById('fEmail').value      = c.email       || '';
     document.getElementById('fPhone').value      = c.phone       || '';
     document.getElementById('fAddress').value    = c.address     || '';
@@ -499,6 +501,7 @@ const App = (() => {
     const contact = {
       first_name:  first,
       last_name:   last,
+      category:    document.getElementById('fCategory').value.trim(),
       email:       document.getElementById('fEmail').value.trim(),
       phone:       document.getElementById('fPhone').value.trim(),
       address:     document.getElementById('fAddress').value.trim(),
@@ -627,7 +630,7 @@ const App = (() => {
     document.getElementById('importError').style.display = 'none';
   }
   function clearForm() {
-    ['fFirstName','fLastName','fEmail','fPhone','fAddress',
+    ['fFirstName','fLastName','fCategory','fEmail','fPhone','fAddress',
      'fPostalCode','fCity','fCountry','fNotes']
       .forEach(id => document.getElementById(id).value = '');
   }

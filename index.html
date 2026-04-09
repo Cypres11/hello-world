@@ -52,8 +52,9 @@
 
   <!-- ── Toolbar ── -->
   <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
-    <h1 class="h3 mb-0">
-      <i class="bi bi-person-lines-fill me-2 text-primary"></i>Contact Database
+    <h1 class="h3 mb-0 d-flex align-items-center gap-2">
+      <img src="logo.jpg" alt="Logo" style="height:42px;width:auto;border-radius:6px;">
+      Contact Database
     </h1>
     <div class="d-flex flex-wrap gap-2 align-items-center">
       <!-- Shown only when rows are selected -->
@@ -100,6 +101,7 @@
             </th>
             <th class="sortable" data-col="first_name">First name  <i class="bi bi-arrow-down-up sort-icon"></i></th>
             <th class="sortable" data-col="last_name">Last name   <i class="bi bi-arrow-down-up sort-icon"></i></th>
+            <th class="sortable" data-col="category">Category    <i class="bi bi-arrow-down-up sort-icon"></i></th>
             <th class="sortable" data-col="email">Email         <i class="bi bi-arrow-down-up sort-icon"></i></th>
             <th class="sortable" data-col="phone">Phone         <i class="bi bi-arrow-down-up sort-icon"></i></th>
             <th class="sortable" data-col="address">Street       <i class="bi bi-arrow-down-up sort-icon"></i></th>
@@ -152,6 +154,12 @@
           </div>
         </div>
         <p class="text-muted small mt-n2 mb-3">At least a first or last name is required.</p>
+
+        <div class="mb-3">
+          <label class="form-label fw-semibold">Category</label>
+          <input type="text" id="fCategory" class="form-control"
+                 placeholder="e.g. Family, Work, Friend…">
+        </div>
 
         <div class="row g-3 mb-3">
           <div class="col-sm-6">
