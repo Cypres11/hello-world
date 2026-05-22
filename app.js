@@ -654,23 +654,37 @@ const App = (() => {
 
       let startX, startW;
 
-      handle.addEventListener('mousedown', e => {
-        e.preventDefault();
-        e.stopPropagation();   // Don't trigger sort
-        startX = e.pageX;
+      // Helper: start resizing (shared by mouse and touch)
+      function startResize(clientX) {
+        startX = clientX;
         startW = th.offsetWidth;
         handle.classList.add('resizing');
         document.body.style.cursor     = 'col-resize';
         document.body.style.userSelect = 'none';
+      }
 
-        const onMove = e => {
-          th.style.width = Math.max(60, startW + (e.pageX - startX)) + 'px';
-        };
-        const onUp = () => {
-          handle.classList.remove('resizing');
-          document.body.style.cursor     = '';
-          document.body.style.userSelect = '';
-          saveWidths();
+      // Helper: update width during drag
+      function doResize(clientX) {
+        th.style.width = Math.max(60, startW + (clientX - startX)) + 'px';
+      }
+
+      // Helper: finish resizing
+      function endResize() {
+        handle.classList.remove('resizing');
+        document.body.style.cursor     = '';
+        document.body.style.userSelect = '';
+        saveWidths();
+      }
+
+      // ── Mouse (desktop) ──────────────────────────────────────────
+      handle.addEventListener('mousedown', e => {
+        e.preventDefault();
+        e.stopPropagation();   // Don't trigger sort
+        startResize(e.pageX);
+
+        const onMove = e => doResize(e.pageX);
+        const onUp   = () => {
+          endResize();
           document.removeEventListener('mousemove', onMove);
           document.removeEventListener('mouseup',   onUp);
         };
@@ -678,7 +692,28 @@ const App = (() => {
         document.addEventListener('mouseup',   onUp);
       });
 
-      // Double-click: reset to auto width
+      // ── Touch (iPad / iPhone) ─────────────────────────────────────
+      // We use passive: false so we can call preventDefault()
+      // and prevent the page from scrolling while resizing.
+      handle.addEventListener('touchstart', e => {
+        e.stopPropagation();   // Don't trigger sort
+        if (e.touches.length !== 1) return;
+        e.preventDefault();
+        startResize(e.touches[0].clientX);
+      }, { passive: false });
+
+      handle.addEventListener('touchmove', e => {
+        if (e.touches.length !== 1) return;
+        e.preventDefault();    // Prevent scroll while dragging
+        doResize(e.touches[0].clientX);
+      }, { passive: false });
+
+      handle.addEventListener('touchend', e => {
+        e.preventDefault();
+        endResize();
+      }, { passive: false });
+
+      // Double-click (desktop): reset to auto width
       handle.addEventListener('dblclick', e => {
         e.preventDefault();
         th.style.width = '';
