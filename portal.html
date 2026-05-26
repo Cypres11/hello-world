@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Cypres11.nl — Roland Broos</title>
+  <meta name="description" content="Cypres11 — Ontwikkelaar van kleine websites voor clubs, verenigingen en particulieren">
+  <meta name="author" content="Roland Broos — Cypres11">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+
+  <style>
+    /* ── Design tokens ─────────────────────────────────────────── */
+    :root {
+      --bg:           #0b0d17;
+      --bg-card:      #13162a;
+      --bg-card-hover:#1c2040;
+      --accent:       #6366f1;
+      --accent-dim:   rgba(99,102,241,0.12);
+      --accent-border:rgba(99,102,241,0.25);
+      --text:         #e2e8f0;
+      --muted:        #8892a4;
+      --border:       rgba(255,255,255,0.06);
+      --header-grad:  linear-gradient(150deg,#0e1029 0%,#151934 60%,#0b0d17 100%);
+    }
+
+    /* ── Reset & base ───────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', system-ui, sans-serif;
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    /* ── Language toggle (fixed, top-right) ─────────────────────── */
+    .lang-toggle {
+      position: fixed;
+      top: 1rem;
+      right: 1rem;
+      z-index: 1100;
+      background: var(--bg-card);
+      border: 1px solid var(--accent-border);
+      border-radius: 2rem;
+      padding: 3px;
+      display: flex;
+      gap: 2px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+    }
+
+    .lang-btn {
+      padding: 4px 16px;
+      border-radius: 1.5rem;
+      border: none;
+      font-family: inherit;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      cursor: pointer;
+      transition: all 0.2s;
+      background: transparent;
+      color: var(--muted);
+    }
+
+    .lang-btn.active {
+      background: var(--accent);
+      color: #fff;
+      box-shadow: 0 0 12px rgba(99,102,241,0.5);
+    }
+
+    /* ── Header ─────────────────────────────────────────────────── */
+    header {
+      background: var(--header-grad);
+      border-bottom: 1px solid var(--border);
+      padding: 3.5rem 0 4rem;
+      position: relative;
+      overflow: hidden;
+      text-align: center;
+    }
+
+    /* decorative glow blobs */
+    header::before,
+    header::after {
+      content: '';
+      position: absolute;
+      border-radius: 50%;
+      pointer-events: none;
+    }
+    header::before {
+      width: 500px; height: 500px;
+      top: -200px; left: -100px;
+      background: radial-gradient(circle, rgba(99,102,241,0.07) 0%, transparent 70%);
+    }
+    header::after {
+      width: 400px; height: 400px;
+      bottom: -150px; right: -80px;
+      background: radial-gradient(circle, rgba(139,92,246,0.05) 0%, transparent 70%);
+    }
+
+    .header-logo {
+      width: 88px;
+      height: 88px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid var(--accent-border);
+      box-shadow: 0 0 32px rgba(99,102,241,0.25), 0 4px 24px rgba(0,0,0,0.4);
+      margin-bottom: 1.25rem;
+    }
+
+    .site-title {
+      font-size: clamp(2rem, 5vw, 3rem);
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      background: linear-gradient(135deg, #e2e8f0 30%, #a5b4fc 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin: 0 0 0.25rem;
+      line-height: 1.1;
+    }
+
+    .site-subtitle {
+      font-size: 0.95rem;
+      font-weight: 400;
+      color: var(--muted);
+      margin: 0 0 0.5rem;
+    }
+
+    .header-date {
+      font-size: 0.78rem;
+      color: rgba(148,163,184,0.6);
+      letter-spacing: 0.02em;
+    }
+
+    /* ── Intro card ──────────────────────────────────────────────── */
+    .intro-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 1rem;
+      padding: 1.5rem 1.75rem;
+      font-size: 0.9rem;
+      color: var(--muted);
+      line-height: 1.7;
+      margin-bottom: 3rem;
+    }
+
+    .intro-card a { color: var(--accent); }
+    .intro-card a:hover { text-decoration: underline; }
+    .intro-card b { color: var(--text); font-weight: 600; }
+
+    /* ── Section heading ─────────────────────────────────────────── */
+    .section-heading {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 1.25rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .section-heading i { font-size: 0.9rem; }
+
+    /* ── Site cards ──────────────────────────────────────────────── */
+    .site-card {
+      display: flex;
+      flex-direction: column;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 1rem;
+      padding: 1.4rem;
+      height: 100%;
+      color: var(--text);
+      text-decoration: none;
+      transition: transform 0.22s ease, background 0.22s ease,
+                  border-color 0.22s ease, box-shadow 0.22s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* top accent line (hidden by default, shown on hover) */
+    .site-card::after {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--accent), transparent 80%);
+      opacity: 0;
+      transition: opacity 0.22s;
+    }
+
+    .site-card:hover {
+      background: var(--bg-card-hover);
+      border-color: var(--accent-border);
+      transform: translateY(-4px);
+      box-shadow: 0 12px 40px rgba(0,0,0,0.35);
+      color: var(--text);
+    }
+
+    .site-card:hover::after { opacity: 1; }
+
+    .card-icon-wrap {
+      width: 46px;
+      height: 46px;
+      border-radius: 0.75rem;
+      background: var(--accent-dim);
+      border: 1px solid var(--accent-border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      color: var(--accent);
+      margin-bottom: 1rem;
+      flex-shrink: 0;
+    }
+
+    .card-num {
+      font-size: 0.65rem;
+      font-weight: 700;
+      color: var(--accent);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 0.2rem;
+    }
+
+    .card-name {
+      font-size: 0.92rem;
+      font-weight: 600;
+      color: var(--text);
+      line-height: 1.3;
+      margin-bottom: 0.5rem;
+    }
+
+    .card-desc {
+      font-size: 0.78rem;
+      color: var(--muted);
+      line-height: 1.55;
+      flex-grow: 1;
+    }
+
+    .card-tag {
+      display: inline-flex;
+      align-items: center;
+      margin-top: 0.9rem;
+      font-size: 0.62rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 3px 10px;
+      border-radius: 1rem;
+      background: var(--accent-dim);
+      color: var(--accent);
+      border: 1px solid var(--accent-border);
+      align-self: flex-start;
+    }
+
+    /* ── Footer ──────────────────────────────────────────────────── */
+    footer {
+      border-top: 1px solid var(--border);
+      background: var(--bg-card);
+      padding: 2.5rem 0;
+      margin-top: 5rem;
+      text-align: center;
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+
+    footer a { color: var(--accent); }
+    footer a:hover { text-decoration: underline; }
+
+    .footer-logo {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      object-fit: cover;
+      opacity: 0.7;
+      margin-bottom: 0.75rem;
+    }
+
+    /* ── Spacing util ────────────────────────────────────────────── */
+    .section-block { margin-bottom: 3.5rem; }
+
+    @media (max-width: 575px) {
+      .lang-toggle { top: auto; bottom: 1.25rem; right: 1rem; }
+      header { padding: 2.5rem 0 3rem; }
+    }
+  </style>
+</head>
+
+<body>
+
+<!-- ── Language toggle ──────────────────────────────────────────── -->
+<div class="lang-toggle" role="group" aria-label="Language / Taal">
+  <button class="lang-btn active" id="btnNL" onclick="setLang('nl')" aria-pressed="true">NL</button>
+  <button class="lang-btn"        id="btnEN" onclick="setLang('en')" aria-pressed="false">EN</button>
+</div>
+
+<!-- ── Header ───────────────────────────────────────────────────── -->
+<header>
+  <img src="images/broos_oil.jpg" alt="Cypres11 logo" class="header-logo">
+  <h1 class="site-title">Cypres11</h1>
+  <p class="site-subtitle"
+     data-nl="Ontwikkelaar van kleine websites"
+     data-en="Developer of small websites"></p>
+  <p class="header-date" id="headerDate"></p>
+</header>
+
+<!-- ── Main content ─────────────────────────────────────────────── -->
+<main class="container py-5">
+
+  <!-- Intro -->
+  <div class="intro-card">
+    <span data-nl
+      data-nl-html='<b>Cypres11</b> ontwikkelt eenvoudige websites voor eigen gebruik, verenigingen en particulieren.
+      Deze website wordt gehost via <a href="https://www.hostinger.com/" target="_blank">Hostinger</a>.
+      Het <a href="https://listen.samcloud.com/v2/133256?page=page-overview" target="_blank">KM71 radiostation</a>
+      wordt nog verder ontwikkeld als hobby!
+      Contacteer <a href="mailto:roland@cypres11.nl">Roland</a> voor meer informatie.'
+      data-en-html='<b>Cypres11</b> develops simple websites for personal use, clubs and associations.
+      This site is hosted via <a href="https://www.hostinger.com/" target="_blank">Hostinger</a>.
+      The <a href="https://listen.samcloud.com/v2/133256?page=page-overview" target="_blank">KM71 radio station</a>
+      is still being developed as a hobby!
+      Contact <a href="mailto:roland@cypres11.nl">Roland</a> for more information.'></span>
+  </div>
+
+  <!-- ════════════════════════════════════════
+       SECTION 1 — CLUBS & ORGANISATIONS
+  ════════════════════════════════════════ -->
+  <div class="section-block">
+    <div class="section-heading">
+      <i class="bi bi-people-fill"></i>
+      <span data-nl="Clubs &amp; Verenigingen" data-en="Clubs &amp; Organisations"></span>
+    </div>
+    <div class="row g-3">
+
+      <div class="col-sm-6 col-xl-4">
+        <a class="site-card" href="http://www.osvbridge.nl/index.php" target="_blank">
+          <div class="card-icon-wrap"><i class="bi bi-puzzle-fill"></i></div>
+          <div class="card-num">01</div>
+          <div class="card-name">OSV Bridge</div>
+          <div class="card-desc"
+               data-nl="De actieve bridgeclub website, ontwikkeld met Joomla. Back-end beheer beschikbaar."
+               data-en="The active bridge club website, built with Joomla. Back-end management available."></div>
+          <span class="card-tag" data-nl="Actief" data-en="Active"></span>
+        </a>
+      </div>
+
+      <div class="col-sm-6 col-xl-4">
+        <a class="site-card" href="sites/osvgolf.nl/index.html" target="_blank">
+          <div class="card-icon-wrap"><i class="bi bi-flag-fill"></i></div>
+          <div class="card-num">02</div>
+          <div class="card-name">OSV Golf</div>
+          <div class="card-desc"
+               data-nl="Oude OSV Golf pagina, destijds gemaakt om te vermelden dat OSV Golf beëindigd was."
+               data-en="Old OSV Golf page, originally made to announce the end of OSV Golf."></div>
+          <span class="card-tag" data-nl="Archief" data-en="Archive"></span>
+        </a>
+      </div>
+
+      <div class="col-sm-6 col-xl-4">
+        <a class="site-card" href="https://listen.samcloud.com/v2/133256?page=page-overview" target="_blank">
+          <div class="card-icon-wrap"><i class="bi bi-broadcast-pin"></i></div>
+          <div class="card-num">12</div>
+          <div class="card-name">KM71 Radiostation</div>
+          <div class="card-desc"
+               data-nl="Internetradio ontwikkeld voor een reünie van het studentenhuis KM71 in Delft. Zie ook www.km71.nl."
+               data-en="Internet radio station built for a reunion of student house KM71 in Delft. See also www.km71.nl."></div>
+          <span class="card-tag" data-nl="Hobby" data-en="Hobby"></span>
+        </a>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════
+       SECTION 2 — WEB DESIGN TOOLS & PRACTICE
+  ════════════════════════════════════════ -->
+  <div class="section-block">
+    <div class="section-heading">
+      <i class="bi bi-code-slash"></i>
+      <span data-nl="Web Design &amp; Oefensites" data-en="Web Design &amp; Practice Sites"></span>
+    </div>
+    <div class="row g-3">
+
+      <div class="col-sm-6 col-xl-4">
+        <a class="site-card" href="https://www.rolandbroos.nl" target="_blank">
+          <div class="card-icon-wrap"><i class="bi bi-wordpress"></i></div>
+          <div class="card-num">03</div>
+          <div class="card-name">WordPress Oefensite</div>
+          <div class="card-desc"
+               data-nl="Oefensite voor het boek 'WordPress voor Dummies' van Lisa Sabin-Wilson. Leren werken met WordPress."
+               data-en="Practice site for the book 'WordPress for Dummies' by Lisa Sabin-Wilson. Learning WordPress."></div>
+          <span class="card-tag">WordPress</span>
+        </a>
+      </div>
+
+      <div class="col-sm-6 col-xl-4">
+        <a class="site-card" href="Eggpro/index.html" target="_blank">
+          <div class="card-icon-wrap"><i class="bi bi-tablet"></i></div>
+          <div class="card-num">05</div>
+          <div class="card-name">Eggpro Oefensite</div>
+          <div class="card-desc"
+               data-nl="Oefensite voor designs gemaakt op de iPad met Eggpro, een drag-and-drop webdesign app."
+               data-en="Practice site for designs created on iPad with Eggpro, a drag-and-drop web design app."></div>
+          <span class="card-tag">Eggpro</span>
+        </a>
+      </div>
+
+      <div class="col-sm-6 col-xl-4">
+        <a class="site-card" href="SiteDesigner/index.html" target="_blank">
+          <div class="card-icon-wrap"><i class="bi bi-brush-fill"></i></div>
+          <div class="card-num">06</div>
+          <div class="card-name">Site Designer Oefensite</div>
+          <div class="card-desc"
+               data-nl="Oefensite voor CoffeeCup Site Designer, een visuele webdesign applicatie van CoffeeCup Software."
+               data-en="Practice site for CoffeeCup Site Designer, a visual web design application by CoffeeCup Software."></div>
+          <span class="card-tag">CoffeeCup</span>
+        </a>
+      </div>
+
+      <div class="col-sm-6 col-xl-4">
+        <a class="site-card" href="sites/phpcursus/index.html" target="_blank">
+          <div class="card-icon-wrap"><i class="bi bi-filetype-php"></i></div>
+          <div class="card-num">08</div>
+          <div class="card-name">PHP Oefensite</div>
+          <div class="card-desc"
+               data-nl="PHP cursus en oefeningen, gebaseerd op de cursus van Mindert Aardema (Netspecialist)."
+               data-en="PHP course and exercises, based on the course by Mindert Aardema (Netspecialist)."></div>
+          <span class="card-tag">PHP</span>
+        </a>
+      </div>
+
+      <div class="col-sm-6 col-xl-4">
+        <a class="site-card" href="testsites/blocsproject/index.html" target="_blank">
+          <div class="card-icon-wrap"><i class="bi bi-grid-3x3-gap-fill"></i></div>
+          <div class="card-num">16</div>
+          <div class="card-name">BLOCS Test Website</div>
+          <div class="card-desc"
+               data-nl="Voorbeeldwebsite ontwikkeld met de BLOCS Web Designer app voor macOS."
+               data-en="Example website built with the BLOCS Web Designer app for macOS."></div>
+          <span class="card-tag">BLOCS</span>
+        </a>
+      </div>
+
+      <div class="col-sm-6 col-xl-4">
+        <a class="site-card" href="testsites/sitedesigner_testproject/index.html" target="_blank">
+          <div class="card-icon-wrap"><i class="bi bi-layout-text-window-reverse"></i></div>
+          <div class="card-num">17</div>
+          <div class="card-name">CoffeeCup Site Designer</div>
+          <div class="card-desc"
+               data-nl="Testwebsite ontwikkeld met de CoffeeCup Site Designer app. Modern responsive ontwerp."
+               data-en="Test website built with the CoffeeCup Site Designer app. Modern responsive design."></div>
+          <span class="card-tag">CoffeeCup</span>
+        </a>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════
+       SECTION 3 — PROJECTS
+  ════════════════════════════════════════ -->
+  <div class="section-block">
+    <div class="section-heading">
+      <i class="bi bi-layers-fill"></i>
+      <span data-nl="Projecten" data-en="Projects"></span>
+    </div>
+    <div class="row g-3">
+
+      <div class="col-sm-6 col-xl-4">
+        <a class="site-card" href="_web_modules/Bronnen/index.html" target="_blank">
+          <div class="card-icon-wrap"><i class="bi bi-lightning-charge-fill"></i></div>
+          <div class="card-num">04</div>
+          <div class="card-name"
+               data-nl="Bronnen van Energie"
+               data-en="Sources of Energy"></div>
+          <div class="card-desc"
+               data-nl="Website over energiebronnen, opgezet met een sitebuilder en daarna handmatig vereenvoudigd."
+               data-en="Website about energy sources, originally built with a sitebuilder, then manually simplified."></div>
+          <span class="card-tag" data-nl="Energie" data-en="Energy"></span>
+        </a>
+      </div>
+
+      <div class="col-sm-6 col-xl-4">
+        <a class="site-card" href="sites/MaChatbox/httpdocs/index.html" target="_blank">
+          <div class="card-icon-wrap"><i class="bi bi-airplane-fill"></i></div>
+          <div class="card-num">07</div>
+          <div class="card-name">Europe from the Sky</div>
+          <div class="card-desc"
+               data-nl="Subdomein testsite, nu met de website 'Europe from the Sky'. Oorspronkelijk een site voor Ma's verblijf in het verzorgingshuis."
+               data-en="Subdomain test site, now featuring 'Europe from the Sky'. Originally a site for Ma's stay in the care home."></div>
+          <span class="card-tag" data-nl="Project" data-en="Project"></span>
+        </a>
+      </div>
+
+      <div class="col-sm-6 col-xl-4">
+        <a class="site-card" href="../sites/Gymnasium-Middelburg/httpdocs/index.html" target="_blank">
+          <div class="card-icon-wrap"><i class="bi bi-mortarboard-fill"></i></div>
+          <div class="card-num">09</div>
+          <div class="card-name">Gymnasium Middelburg</div>
+          <div class="card-desc"
+               data-nl="Website voor de eindexamenklas 1968. Gemaakt in de trein terug na een reünie in Middelburg. Ontwikkeld met Eggpro."
+               data-en="Website for the 1968 school-leaving class. Made on the train home after a reunion in Middelburg. Built with Eggpro."></div>
+          <span class="card-tag" data-nl="Reünie 1968" data-en="Reunion 1968"></span>
+        </a>
+      </div>
+
+      <div class="col-sm-6 col-xl-4">
+        <a class="site-card" href="../sites/maidenspeech/" target="_blank">
+          <div class="card-icon-wrap"><i class="bi bi-mic-fill"></i></div>
+          <div class="card-num">11</div>
+          <div class="card-name">Maidenspeech</div>
+          <div class="card-desc"
+               data-nl="Artikel afkomstig uit de OSV Golf Joomla database. Een historisch stukje uit de clubarchieven."
+               data-en="Article extracted from the OSV Golf Joomla database. A historical piece from the club archives."></div>
+          <span class="card-tag" data-nl="Artikel" data-en="Article"></span>
+        </a>
+      </div>
+
+      <div class="col-sm-6 col-xl-4">
+        <a class="site-card" href="_web_designer/coffee_project/index.html" target="_blank">
+          <div class="card-icon-wrap"><i class="bi bi-cup-hot-fill"></i></div>
+          <div class="card-num">13</div>
+          <div class="card-name">Simpatico</div>
+          <div class="card-desc"
+               data-nl="Sfeervolle websitesjabloon ontwikkeld met CoffeeCup Site Designer."
+               data-en="Atmospheric website template developed with CoffeeCup Site Designer."></div>
+          <span class="card-tag">CoffeeCup</span>
+        </a>
+      </div>
+
+      <div class="col-sm-6 col-xl-4">
+        <a class="site-card" href="_web_designer/jay_hardway/index.html" target="_blank">
+          <div class="card-icon-wrap"><i class="bi bi-music-note-beamed"></i></div>
+          <div class="card-num">14</div>
+          <div class="card-name">DJ Hardway</div>
+          <div class="card-desc"
+               data-nl="DJ-website concept ontwikkeld met CoffeeCup Site Designer."
+               data-en="DJ website concept developed with CoffeeCup Site Designer."></div>
+          <span class="card-tag" data-nl="Muziek" data-en="Music"></span>
+        </a>
+      </div>
+
+      <div class="col-sm-6 col-xl-4">
+        <a class="site-card" href="_web_modules/malouf/index.html" target="_blank">
+          <div class="card-icon-wrap"><i class="bi bi-music-player-fill"></i></div>
+          <div class="card-num">15</div>
+          <div class="card-name">Ibrahim Malouf at NSJ</div>
+          <div class="card-desc"
+               data-nl="Tribute aan het concert van Ibrahim Malouf op North Sea Jazz 2024 — een cadeau voor mijn 75e verjaardag."
+               data-en="Tribute to Ibrahim Malouf's concert at North Sea Jazz 2024 — a gift for my 75th birthday."></div>
+          <span class="card-tag" data-nl="Concert" data-en="Concert"></span>
+        </a>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════
+       SECTION 4 — CLOUD & FILES
+  ════════════════════════════════════════ -->
+  <div class="section-block">
+    <div class="section-heading">
+      <i class="bi bi-cloud-fill"></i>
+      <span data-nl="Cloud &amp; Bestanden" data-en="Cloud &amp; Files"></span>
+    </div>
+    <div class="row g-3">
+
+      <div class="col-sm-6 col-xl-4">
+        <a class="site-card" href="https://1drv.ms/f/s!AqxPImq25d2E18cmQE3Jw-u2-djhgg?e=AjOv8I" target="_blank">
+          <div class="card-icon-wrap"><i class="bi bi-cloud-arrow-down-fill"></i></div>
+          <div class="card-num">10</div>
+          <div class="card-name">Cypres11 Cloud Files</div>
+          <div class="card-desc"
+               data-nl="Openbaar OneDrive-gedeelte met downloadbare artikelen, documenten en bestanden."
+               data-en="Public OneDrive area with downloadable articles, documents and files."></div>
+          <span class="card-tag">OneDrive</span>
+        </a>
+      </div>
+
+    </div>
+  </div>
+
+</main>
+
+<!-- ── Footer ───────────────────────────────────────────────────── -->
+<footer>
+  <div class="container">
+    <img src="images/broos_oil.jpg" alt="Cypres11" class="footer-logo">
+    <p class="mb-1">
+      <a href="https://nl.wikipedia.org/wiki/Auteursrecht" target="_blank">Copyright</a>
+      &copy; 2025 &mdash;
+      <a href="mailto:roland@cypres11.nl">Cypres11</a> &mdash; Roland Broos
+    </p>
+    <p class="mb-0" data-nl="Gehost via Hostinger" data-en="Hosted via Hostinger"></p>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  'use strict';
+
+  /* ── Language engine ─────────────────────────────────────────── */
+  function setLang(lang) {
+    const other = lang === 'nl' ? 'en' : 'nl';
+    document.documentElement.lang = lang;
+
+    // Toggle button states
+    document.getElementById('btnNL').classList.toggle('active', lang === 'nl');
+    document.getElementById('btnNL').setAttribute('aria-pressed', lang === 'nl');
+    document.getElementById('btnEN').classList.toggle('active', lang === 'en');
+    document.getElementById('btnEN').setAttribute('aria-pressed', lang === 'en');
+
+    // Update every element that carries both data-nl and data-en as text content
+    document.querySelectorAll('[data-nl][data-en]').forEach(el => {
+      const val = el.getAttribute('data-' + lang);
+      if (val !== null) el.textContent = val;
+    });
+
+    // Update innerHTML elements (intro paragraph uses data-xx-html attributes)
+    document.querySelectorAll('[data-nl-html][data-en-html]').forEach(el => {
+      const val = el.getAttribute('data-' + lang + '-html');
+      if (val !== null) el.innerHTML = val;
+    });
+
+    localStorage.setItem('lang', lang);
+    updateDate(lang);
+  }
+
+  /* ── Date display ─────────────────────────────────────────────── */
+  function updateDate(lang) {
+    const locale = lang === 'nl' ? 'nl-NL' : 'en-GB';
+    const opts   = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
+    document.getElementById('headerDate').textContent =
+      new Date().toLocaleDateString(locale, opts);
+  }
+
+  /* ── Init ─────────────────────────────────────────────────────── */
+  (function init() {
+    const saved = localStorage.getItem('lang') ||
+                  (navigator.language && navigator.language.startsWith('nl') ? 'nl' : 'en');
+    setLang(saved);
+  })();
+</script>
+
+</body>
+</html>
