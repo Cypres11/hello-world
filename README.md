@@ -71,10 +71,10 @@ Open **http://localhost:8080**. Stop the server with `Ctrl + C`.
 The app is published at:
 
 **https://cypres11.github.io/hello-world/**
+zxZ
+Open that URL in **Safari** on your iPad or wW
 
-Open that URL in **Safari** on your iPad or iPhone.
-
-### Install to home screen
+### Install to Home Screen
 
 1. Tap the **Share** button (box with an arrow pointing up)
 2. Tap **Add to Home Screen**
