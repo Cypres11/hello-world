@@ -290,23 +290,143 @@
       margin-bottom: 0.75rem;
     }
 
+    /* ── Sticky navbar ───────────────────────────────────────────── */
+    .site-nav {
+      background: rgba(11,13,23,0.97);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    .site-nav .navbar-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-weight: 700;
+      font-size: 1rem;
+      color: var(--text);
+      letter-spacing: -0.01em;
+    }
+
+    .nav-logo {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 1px solid var(--accent-border);
+    }
+
+    .site-nav .nav-link {
+      color: var(--muted);
+      font-size: 0.82rem;
+      font-weight: 500;
+      padding: 0.5rem 0.75rem;
+      transition: color 0.2s;
+    }
+
+    .site-nav .nav-link:hover,
+    .site-nav .nav-link.show { color: var(--text); }
+
+    .site-nav .nav-link.contact-link {
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    .site-nav .nav-link.contact-link:hover { color: #a5b4fc; }
+
+    /* Dropdown menu */
+    .site-nav .dropdown-menu {
+      background: #1a1d35;
+      border: 1px solid var(--accent-border);
+      border-radius: 0.75rem;
+      padding: 0.4rem;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.5);
+      min-width: 200px;
+    }
+
+    .site-nav .dropdown-item {
+      color: var(--muted);
+      font-size: 0.8rem;
+      font-weight: 400;
+      padding: 0.5rem 0.85rem;
+      border-radius: 0.5rem;
+      transition: all 0.15s;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .site-nav .dropdown-item:hover {
+      background: var(--accent-dim);
+      color: var(--text);
+    }
+
+    .site-nav .dropdown-item i {
+      font-size: 0.85rem;
+      color: var(--accent);
+      width: 16px;
+      flex-shrink: 0;
+    }
+
+    /* Hamburger icon */
+    .navbar-toggler {
+      border: 1px solid var(--accent-border);
+      border-radius: 0.5rem;
+      padding: 0.35rem 0.6rem;
+      color: var(--muted);
+      background: none;
+    }
+
+    .navbar-toggler:focus { box-shadow: none; }
+
+    /* ── Language toggle (in navbar) ─────────────────────────────── */
+    .lang-toggle {
+      background: var(--bg-card);
+      border: 1px solid var(--accent-border);
+      border-radius: 2rem;
+      padding: 3px;
+      display: flex;
+      gap: 2px;
+    }
+
+    .lang-btn {
+      padding: 3px 14px;
+      border-radius: 1.5rem;
+      border: none;
+      font-family: inherit;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      cursor: pointer;
+      transition: all 0.2s;
+      background: transparent;
+      color: var(--muted);
+    }
+
+    .lang-btn.active {
+      background: var(--accent);
+      color: #fff;
+      box-shadow: 0 0 10px rgba(99,102,241,0.45);
+    }
+
     /* ── Spacing util ────────────────────────────────────────────── */
     .section-block { margin-bottom: 3.5rem; }
 
+    @media (max-width: 991px) {
+      .site-nav .dropdown-menu { border-radius: 0.5rem; }
+      .lang-toggle { margin-top: 0.5rem; margin-bottom: 0.5rem; }
+    }
+
     @media (max-width: 575px) {
-      .lang-toggle { top: auto; bottom: 1.25rem; right: 1rem; }
       header { padding: 2.5rem 0 3rem; }
     }
   </style>
 </head>
 
 <body>
-
-<!-- ── Language toggle ──────────────────────────────────────────── -->
-<div class="lang-toggle" role="group" aria-label="Language / Taal">
-  <button class="lang-btn active" id="btnNL" onclick="setLang('nl')" aria-pressed="true">NL</button>
-  <button class="lang-btn"        id="btnEN" onclick="setLang('en')" aria-pressed="false">EN</button>
-</div>
 
 <!-- ── Header ───────────────────────────────────────────────────── -->
 <header>
@@ -317,6 +437,119 @@
      data-en="Developer of small websites"></p>
   <p class="header-date" id="headerDate"></p>
 </header>
+
+<!-- ── Sticky navbar ────────────────────────────────────────────── -->
+<nav class="site-nav navbar navbar-expand-lg">
+  <div class="container">
+
+    <a class="navbar-brand" href="#">
+      <img src="images/broos_oil.jpg" alt="Cypres11" class="nav-logo">
+      Cypres11
+    </a>
+
+    <button class="navbar-toggler" type="button"
+            data-bs-toggle="collapse" data-bs-target="#navMenu"
+            aria-controls="navMenu" aria-expanded="false">
+      <i class="bi bi-list" style="font-size:1.2rem"></i>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navMenu">
+      <ul class="navbar-nav me-auto gap-1">
+
+        <!-- Clubs -->
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#clubs"
+             data-bs-toggle="dropdown" aria-expanded="false">
+            <span data-nl="Clubs &amp; Verenigingen" data-en="Clubs &amp; Organisations"></span>
+          </a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="http://www.osvbridge.nl/index.php" target="_blank">
+              <i class="bi bi-puzzle-fill"></i>OSV Bridge</a></li>
+            <li><a class="dropdown-item" href="sites/osvgolf.nl/index.html" target="_blank">
+              <i class="bi bi-flag-fill"></i>OSV Golf</a></li>
+            <li><a class="dropdown-item" href="https://listen.samcloud.com/v2/133256?page=page-overview" target="_blank">
+              <i class="bi bi-broadcast-pin"></i>KM71 Radiostation</a></li>
+          </ul>
+        </li>
+
+        <!-- Web Design -->
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#webdesign"
+             data-bs-toggle="dropdown" aria-expanded="false">
+            <span data-nl="Web Design" data-en="Web Design"></span>
+          </a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="https://www.rolandbroos.nl" target="_blank">
+              <i class="bi bi-wordpress"></i>WordPress Oefensite</a></li>
+            <li><a class="dropdown-item" href="Eggpro/index.html" target="_blank">
+              <i class="bi bi-tablet"></i>Eggpro Oefensite</a></li>
+            <li><a class="dropdown-item" href="SiteDesigner/index.html" target="_blank">
+              <i class="bi bi-brush-fill"></i>Site Designer</a></li>
+            <li><a class="dropdown-item" href="sites/phpcursus/index.html" target="_blank">
+              <i class="bi bi-filetype-php"></i>PHP Oefensite</a></li>
+            <li><a class="dropdown-item" href="testsites/blocsproject/index.html" target="_blank">
+              <i class="bi bi-grid-3x3-gap-fill"></i>BLOCS</a></li>
+            <li><a class="dropdown-item" href="testsites/sitedesigner_testproject/index.html" target="_blank">
+              <i class="bi bi-layout-text-window-reverse"></i>CoffeeCup Site Designer</a></li>
+          </ul>
+        </li>
+
+        <!-- Projecten -->
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#projecten"
+             data-bs-toggle="dropdown" aria-expanded="false">
+            <span data-nl="Projecten" data-en="Projects"></span>
+          </a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="_web_modules/Bronnen/index.html" target="_blank">
+              <i class="bi bi-lightning-charge-fill"></i>
+              <span data-nl="Bronnen van Energie" data-en="Sources of Energy"></span></a></li>
+            <li><a class="dropdown-item" href="sites/MaChatbox/httpdocs/index.html" target="_blank">
+              <i class="bi bi-airplane-fill"></i>Europe from the Sky</a></li>
+            <li><a class="dropdown-item" href="../sites/Gymnasium-Middelburg/httpdocs/index.html" target="_blank">
+              <i class="bi bi-mortarboard-fill"></i>Gymnasium Middelburg</a></li>
+            <li><a class="dropdown-item" href="../sites/maidenspeech/" target="_blank">
+              <i class="bi bi-mic-fill"></i>Maidenspeech</a></li>
+            <li><a class="dropdown-item" href="_web_designer/coffee_project/index.html" target="_blank">
+              <i class="bi bi-cup-hot-fill"></i>Simpatico</a></li>
+            <li><a class="dropdown-item" href="_web_designer/jay_hardway/index.html" target="_blank">
+              <i class="bi bi-music-note-beamed"></i>DJ Hardway</a></li>
+            <li><a class="dropdown-item" href="_web_modules/malouf/index.html" target="_blank">
+              <i class="bi bi-music-player-fill"></i>Ibrahim Malouf at NSJ</a></li>
+          </ul>
+        </li>
+
+        <!-- Cloud -->
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#cloud"
+             data-bs-toggle="dropdown" aria-expanded="false">
+            <span data-nl="Cloud" data-en="Cloud"></span>
+          </a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="https://1drv.ms/f/s!AqxPImq25d2E18cmQE3Jw-u2-djhgg?e=AjOv8I" target="_blank">
+              <i class="bi bi-cloud-arrow-down-fill"></i>Cypres11 Cloud Files</a></li>
+          </ul>
+        </li>
+
+        <!-- Contact -->
+        <li class="nav-item">
+          <a class="nav-link contact-link" href="mailto:roland@cypres11.nl">
+            <i class="bi bi-envelope-fill me-1"></i>
+            <span data-nl="Contact" data-en="Contact"></span>
+          </a>
+        </li>
+
+      </ul>
+
+      <!-- NL / EN toggle -->
+      <div class="lang-toggle ms-lg-3" role="group" aria-label="Language / Taal">
+        <button class="lang-btn active" id="btnNL" onclick="setLang('nl')" aria-pressed="true">NL</button>
+        <button class="lang-btn"        id="btnEN" onclick="setLang('en')" aria-pressed="false">EN</button>
+      </div>
+    </div>
+
+  </div>
+</nav>
 
 <!-- ── Main content ─────────────────────────────────────────────── -->
 <main class="container py-5">
@@ -339,7 +572,7 @@
   <!-- ════════════════════════════════════════
        SECTION 1 — CLUBS & ORGANISATIONS
   ════════════════════════════════════════ -->
-  <div class="section-block">
+  <div class="section-block" id="clubs">
     <div class="section-heading">
       <i class="bi bi-people-fill"></i>
       <span data-nl="Clubs &amp; Verenigingen" data-en="Clubs &amp; Organisations"></span>
@@ -388,7 +621,7 @@
   <!-- ════════════════════════════════════════
        SECTION 2 — WEB DESIGN TOOLS & PRACTICE
   ════════════════════════════════════════ -->
-  <div class="section-block">
+  <div class="section-block" id="webdesign">
     <div class="section-heading">
       <i class="bi bi-code-slash"></i>
       <span data-nl="Web Design &amp; Oefensites" data-en="Web Design &amp; Practice Sites"></span>
@@ -473,7 +706,7 @@
   <!-- ════════════════════════════════════════
        SECTION 3 — PROJECTS
   ════════════════════════════════════════ -->
-  <div class="section-block">
+  <div class="section-block" id="projecten">
     <div class="section-heading">
       <i class="bi bi-layers-fill"></i>
       <span data-nl="Projecten" data-en="Projects"></span>
@@ -572,7 +805,7 @@
   <!-- ════════════════════════════════════════
        SECTION 4 — CLOUD & FILES
   ════════════════════════════════════════ -->
-  <div class="section-block">
+  <div class="section-block" id="cloud">
     <div class="section-heading">
       <i class="bi bi-cloud-fill"></i>
       <span data-nl="Cloud &amp; Bestanden" data-en="Cloud &amp; Files"></span>
