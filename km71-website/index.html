@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>KM71 Jukebox Radio — Live luisteren</title>
+  <meta name="description" content="KM71 Jukebox Radio: eclectische muziek van pop tot motown, live te beluisteren en vraag je eigen nummer aan." />
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Righteous&family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <header class="site-header">
+    <nav class="container nav">
+      <a class="brand" href="index.html"><span class="dot"></span> KM71</a>
+      <button class="nav-toggle" aria-label="Menu openen" aria-expanded="false">☰</button>
+      <ul class="nav-links">
+        <li><a href="index.html" aria-current="page">Home</a></li>
+        <li><a href="verzoekjes.html">Verzoekjes</a></li>
+        <li><a href="over-ons.html">Over ons</a></li>
+        <li><a href="contact.html">Contact</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="container">
+        <span class="eyebrow">De jukebox van Koornmarkt 71</span>
+        <h1>Muziek van de <span>middenkamer</span>,<br />nu live voor iedereen</h1>
+        <p class="lead">
+          KM71 Jukebox Radio speelt de nummers die ooit uit de legendarische jukebox
+          van de middenkamer klonken — van pop en rock tot soul, disco en motown.
+          Zet 'm aan, en vraag je eigen plaat aan.
+        </p>
+        <div class="btn-row">
+          <a class="btn btn-primary" href="verzoekjes.html">🎵 Vraag een nummer aan</a>
+          <a class="btn btn-secondary" href="over-ons.html">Lees het verhaal</a>
+        </div>
+      </div>
+    </section>
+
+    <section id="luister">
+      <div class="container">
+        <div class="panel player-panel">
+          <!--
+            SAM Broadcaster Cloud — livestream player widget
+            ----------------------------------------------------
+            Log in op https://samcloud.spacial.com, ga naar de sidebar
+            "Widgets" en genereer daar de "Web Player" widget-code voor
+            station 133256. Plak de <iframe> die je krijgt hieronder in
+            plaats van de placeholder-tekst.
+          -->
+          <div class="player-fallback" id="player-placeholder">
+            🔊 Hier komt de live SAM Cloud speler.<br />
+            Vervang dit blok door de embed-code uit je SAM Cloud
+            "Widgets"-paneel (Web Player).
+          </div>
+          <!-- Voorbeeld, na het invullen van je eigen widget-URL:
+          <iframe
+            class="player-embed"
+            src="https://player.samcloud.com/embed/PLAYER-ID-HIER"
+            title="KM71 live player"
+            allow="autoplay"
+            loading="lazy"
+          ></iframe>
+          -->
+        </div>
+      </div>
+    </section>
+
+    <section id="genres">
+      <div class="container">
+        <div class="section-heading">
+          <span class="eyebrow">Playlist</span>
+          <h2>Een mix zoals de jukebox 'm speelde</h2>
+          <p>Geen strak format, maar een eerlijke mix van decennia en stijlen.</p>
+        </div>
+        <div class="genre-tags">
+          <span>Pop</span>
+          <span>Rock</span>
+          <span>Progressive rock</span>
+          <span>Jazz</span>
+          <span>Latin</span>
+          <span>Dance</span>
+          <span>Soul</span>
+          <span>Disco</span>
+          <span>Motown</span>
+          <span>Wereldmuziek</span>
+        </div>
+      </div>
+    </section>
+
+    <section id="verzoekjes-cta">
+      <div class="container">
+        <div class="callout">
+          <h2>Jouw plaat, jouw moment</h2>
+          <p style="color: var(--muted); max-width: 480px; margin: 0.75rem auto 1.5rem;">
+            Blader door de bibliotheek, kies een nummer of draag 'm op aan iemand.
+            Aangevraagde nummers klinken meestal binnen 2 uur op KM71.
+          </p>
+          <a class="btn btn-primary" href="verzoekjes.html">Naar de verzoekjespagina</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <span>© <span id="year"></span> KM71 Jukebox Radio</span>
+      <ul class="footer-links">
+        <li><a href="over-ons.html">Over ons</a></li>
+        <li><a href="verzoekjes.html">Verzoekjes</a></li>
+        <li><a href="contact.html">Contact</a></li>
+      </ul>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+  <script>document.getElementById("year").textContent = new Date().getFullYear();</script>
+</body>
+</html>
