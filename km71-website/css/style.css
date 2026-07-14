@@ -17,6 +17,17 @@
 
 html { scroll-behavior: smooth; }
 
+/* SAM Cloud widgets (sam-widget) render their own search input with a
+   white background, but on this dark-themed page the text inside can
+   inherit a near-white color too, making it unreadable. Force readable
+   contrast. Has no effect if the widget uses Shadow DOM internally —
+   in that case this needs to be reported to Spacial/SAM support instead. */
+sam-widget input {
+  color: #1a1a1a !important;
+  background-color: #ffffff !important;
+  color-scheme: light;
+}
+
 body {
   margin: 0;
   background: radial-gradient(circle at top, var(--bg-alt), var(--bg) 60%);
