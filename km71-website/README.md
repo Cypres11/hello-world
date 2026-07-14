@@ -46,18 +46,9 @@ bibliotheek kunnen bladeren en een nummer aanvragen. Vereist dat **Settings →
 Request Policy → "Enable requests from widgets"** aanstaat in je SAM Cloud
 dashboard.
 
-**Historie-widget — nog te doen.** Wil je op de homepage laten zien wat er
-al gedraaid heeft?
-
-1. Log in op **https://samcloud.spacial.com**.
-2. Ga naar **Widgets → Web Widgets → Add Widget**.
-3. Zet **Widget type** op **History**, stel kleuren/aantal items naar smaak
-   in, en klik **Generate Code**.
-4. Stuur mij de gegenereerde `<sam-widget type="history" ...>`-code, of plak
-   'm zelf in `index.html` in het blok met het commentaar
-   `SAM Broadcaster Cloud — History widget` (vervangt het
-   `#history-placeholder`-blok). De benodigde `<script>`-regel staat al in
-   de `<head>` van `index.html`.
+**Historie-widget — ingevuld.** `index.html` toont onder "Draaide net" de
+SAM Cloud **History**-widget (laatste 6 nummers), met dezelfde kleuren als
+de rest van de site.
 
 ## Lokaal testen
 

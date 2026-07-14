@@ -79,17 +79,18 @@
         <div class="panel">
           <!--
             SAM Broadcaster Cloud — History widget
-            ----------------------------------------------------
-            Genereer in SAM Cloud: Widgets → Web Widgets → Add Widget →
-            Widget type "History". Stel kleuren/aantal items in en klik
-            "Generate Code". Vervang dit blok door de <sam-widget
-            type="history" ...> die je daar krijgt.
+            Kleuren (theme=...) aangepast aan de site; overige instellingen
+            zijn precies zoals gegenereerd in het SAM Cloud dashboard.
           -->
-          <div class="player-fallback" id="history-placeholder">
-            🕓 Hier komt de afspeelhistorie.<br />
-            Vervang dit blok door de embed-code uit je SAM Cloud
-            "Web Widgets"-paneel (Widget type: History).
-          </div>
+          <sam-widget type="history" station-id="133256"
+            token="7a3a3dc457ba4f07a1c8f74d6f980ed7ffc5b91f"
+            playlist-id="undefined"
+            anim-type='focus-in-expand' easing='ease-in-out-back' refresh-interval='30s'
+            station-refresh-interval='default' theme-border-radius='rounded' image-border-radius='rounded'
+            theme='{"backgroundTop":"#241c13","backgroundBottom":"#1d1710","widgetBorder":"#382c1d","dividers":"#382c1d","buttons":"#e8a33d","text":"#f3ebdd"}'
+            show-buy-button='when populated' show-request-button='true'
+            show-cover-art='true' history-limit='6'>
+          </sam-widget>
         </div>
       </div>
     </section>
