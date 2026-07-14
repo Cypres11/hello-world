@@ -120,6 +120,20 @@ img { max-width: 100%; display: block; }
 .nav-links a:hover,
 .nav-links a[aria-current="page"] { color: var(--gold-bright); }
 
+.nav-links a.nav-cta {
+  background: var(--gold);
+  color: #201607;
+  padding: 0.35rem 0.9rem;
+  border-radius: 999px;
+  font-weight: 700;
+}
+
+.nav-links a.nav-cta:hover,
+.nav-links a.nav-cta[aria-current="page"] {
+  background: var(--gold-bright);
+  color: #201607;
+}
+
 .nav-toggle {
   display: none;
   background: none;
@@ -252,6 +266,12 @@ img { max-width: 100%; display: block; }
   color: var(--muted);
   font-size: 0.9rem;
 }
+
+/* Pagina's (single-page app — geen volledige page-reload, dus de
+   audiospeler in de header blijft doorspelen bij het wisselen) */
+
+.page { display: none; padding: 0; }
+.page.active { display: block; }
 
 /* Sections */
 

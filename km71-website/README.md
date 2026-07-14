@@ -3,69 +3,84 @@
 Statische, responsive site voor www.km71.nl. Geen server of database nodig —
 alleen HTML, CSS en JS, dus direct te uploaden naar Hostinger.
 
+Sinds de laatste update is dit een **single-page app**: alle inhoud
+(Home/Verzoekjes/Over ons/Contact) staat in één `index.html`, en JavaScript
+(`js/router.js`) wisselt welk deel zichtbaar is op basis van het URL-anker
+(`#home`, `#verzoekjes`, `#over-ons`, `#contact`). Reden: bij een gewone
+meerdere-pagina's-site laadt de browser bij elke klik een hele nieuwe pagina,
+wat de audiospeler in de header steeds vernietigde — vandaar dat de muziek
+stopte bij het aanvragen van een nummer. Nu blijft de pagina (en dus de
+audiospeler) altijd hetzelfde, en wordt alleen de zichtbare sectie gewisseld.
+
 ## Bestanden
 
 ```
 km71-website/
-├── index.html        Home — hero, live player, genres
-├── verzoekjes.html    Song requests — SAM Cloud request-widget
-├── over-ons.html      Verhaal van de jukebox / Koornmarkt 71
-├── contact.html        Contactgegevens
-├── css/style.css       Alle styling
-├── js/main.js          Mobiel menu
-└── assets/favicon.svg  Site-icoon
+├── index.html            Alle pagina's in één bestand (SPA)
+├── verzoekjes.html        Redirect-stub → index.html#verzoekjes
+├── over-ons.html          Redirect-stub → index.html#over-ons
+├── contact.html           Redirect-stub → index.html#contact
+├── css/style.css          Alle styling
+├── js/main.js             Mobiel menu
+├── js/router.js           Wisselt de zichtbare "pagina" o.b.v. het URL-anker
+└── assets/favicon.svg     Site-icoon
 ```
+
+De drie `.html`-bestanden met "redirect-stub" bestaan alleen voor het geval
+iemand nog een oude link/bladwijzer naar bijv. `km71.nl/contact.html` heeft —
+ze verwijzen direct door naar de juiste plek in `index.html`. Alle echte
+inhoud staat in `index.html`.
 
 ## Wat je nog zelf moet invullen
 
-Zoek in de bestanden naar `[PLACEHOLDER: ...]` en vul aan:
+Zoek in `index.html` naar `[PLACEHOLDER: ...]` en vul aan:
 
-- **over-ons.html** — het volledige verhaal achter de jukebox
-- **contact.html** — telefoonnummer, social media links
+- **Over ons-sectie** (`id="page-over-ons"`) — het volledige verhaal achter de jukebox
+- **Contact-sectie** (`id="page-contact"`) — telefoonnummer, social media links
 - **assets/** — voeg een echt logo/foto toe indien gewenst
 
-Het e-mailadres in `contact.html` staat bewust *niet* als platte tekst in de
-HTML (tegen scrapers) maar wordt via een klein scriptje aan het eind van het
-bestand samengesteld. Wil je het adres wijzigen? Zoek in `contact.html` naar
+Het e-mailadres in de contact-sectie staat bewust *niet* als platte tekst in
+de HTML (tegen scrapers) maar wordt via een klein scriptje onderaan
+`index.html` samengesteld. Wil je het adres wijzigen? Zoek naar
 `var user = "mala";` en `var domain = "km71.nl";` en pas die twee regels aan.
 
 ## SAM Broadcaster Cloud koppelen
 
-**Live speler — ingevuld, incl. autoplay, op elke pagina.** De speler staat
-niet meer alleen op de homepage, maar als compacte "mini-player" in de
-menubalk (`.mini-player`), aanwezig op alle vier de pagina's. Dat voorkomt dat
-het geluid stopt zodra iemand naar bijv. de verzoekjes-pagina navigeert —
-zonder dat blijft het echt een gewone meerdere-paginas-website, dus bij elke
-paginawissel herverbindt de speler wel opnieuw met de live-stream (goed voor
-~1 seconde onderbreking, onvermijdelijk bij een normale, niet-single-page
-website). Gebruikt de directe SAM Cloud stream-URL (station 133256,
-`rid=280691`) in een native HTML5 `<audio controls autoplay>`-element. Let
-op: browsers (vooral Safari en Chrome op mobiel) blokkeren standaard geluid
-dat automatisch start zonder gebruikersinteractie — dat is bewust
-browserbeleid en niet te omzeilen vanuit de website zelf. Op sommige
-browsers/bij terugkerende bezoekers start het wel vanzelf; anders staat de
-play-knop in de menubalk gewoon klaar.
+**Live speler — ingevuld, incl. autoplay, écht doorlopend.** De speler staat
+als compacte "mini-player" (`.mini-player`) één keer in de header, en blijft
+– omdat dit nu een single-page app is – hetzelfde audio-element tijdens het
+navigeren tussen Home/Verzoekjes/Over ons/Contact. Geen enkele onderbreking
+meer bij het aanvragen van een nummer. Gebruikt de directe SAM Cloud
+stream-URL (station 133256, `rid=280691`) in een native HTML5
+`<audio controls autoplay>`-element. Let op: browsers (vooral Safari en
+Chrome op mobiel) blokkeren standaard geluid dat automatisch start zonder
+gebruikersinteractie bij het eerste bezoek — dat is bewust browserbeleid en
+niet te omzeilen vanuit de website zelf; de play-knop in de menubalk staat
+dan gewoon klaar.
 
-Wil je het adres van de stream ooit wijzigen? Het staat op 4 plekken (één
-per pagina, in de `.mini-player`) — zoek-en-vervang de URL in alle 4 de
-HTML-bestanden.
-
-**Verzoekjes-widget — ingevuld.** `verzoekjes.html` bevat de SAM Cloud
+**Verzoekjes-widget — ingevuld.** De verzoekjes-sectie bevat de SAM Cloud
 **Library**-widget (met "Allow request" aan), zodat luisteraars door de hele
 bibliotheek kunnen bladeren en een nummer aanvragen. Vereist dat **Settings →
 Request Policy → "Enable requests from widgets"** aanstaat in je SAM Cloud
 dashboard.
 
-**Historie-widget — ingevuld.** `index.html` toont onder "Draaide net" de
-SAM Cloud **History**-widget (laatste 6 nummers), met dezelfde kleuren als
-de rest van de site.
+**Historie-widget — ingevuld.** De homepage toont onder "Draaide net" de SAM
+Cloud **History**-widget (laatste 6 nummers).
+
+**Wachtrij-widget — ingevuld.** Zowel op de homepage ("Wat er in de wachtrij
+staat") als op de verzoekjespagina ("De wachtrij") staat de SAM Cloud
+**Line Up**-widget (in SAM Cloud heet de wachtrij dus "Line Up", niet
+"Queue"), zodat je kunt zien of een aangevraagd nummer is toegevoegd.
+
+Alle widgets zijn herkleurd naar het amber/donkere thema van de site via het
+`theme='{...}'`-attribuut op elke `<sam-widget>`.
 
 **Wanneer een verzoek wordt afgespeeld — instelbaar in SAM Cloud, niet in de
 website.** Onder **Station Settings → Request Policy → Request Policy
 Rules** bepaal je hoe snel een aanvraag klinkt:
 
 - **Delay request … minutes before it becomes eligible for rotation** — hoe
-  lager dit getal, hoe eerder een verzoek uberhaupt in aanmerking komt.
+  lager dit getal, hoe eerder een verzoek überhaupt in aanmerking komt.
 - **Move request to top of Queue** — kies deze optie (in plaats van "Leave
   request in Request list") om een verzoek zo snel mogelijk, direct na het
   lopende nummer, te laten spelen.
@@ -108,4 +123,7 @@ find css js assets -type d -exec chmod 755 {} \;
 
 Kleurenschema: warm goud/amber (`#e8a33d`) op een donkere achtergrond
 (`#14100c`) — een retro-jukebox gevoel met een moderne, strakke lay-out.
-Volledig responsive (mobiel menu vanaf 720px breedte).
+Volledig responsive (mobiel menu vanaf 720px breedte). De "Verzoekjes"-link
+in de menubalk is bewust als knop gestyled (`.nav-cta`) — dat is nu de enige
+duidelijke oproep om een nummer aan te vragen; de homepage legt de nadruk op
+wat er speelt en in de wachtrij staat.
