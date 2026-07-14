@@ -10,6 +10,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Righteous&family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="css/style.css" />
+  <script type="module" src="//samcloudmedia.spacial.com/webwidgets/widget/v6/sam-widgets/sam-widgets.esm.js"></script>
 </head>
 <body>
   <header class="site-header">
@@ -49,31 +50,20 @@
 
         <div class="panel">
           <!--
-            SAM Broadcaster Cloud — request/dedication widget
-            ----------------------------------------------------
-            1. Log in op https://samcloud.spacial.com voor station 133256.
-            2. Ga naar Settings → Request Policy en vink "Enable requests
-               from widgets" aan (en eventueel "Allow listeners to dedicate
-               requests").
-            3. Ga naar de "Widgets"-tab in de sidebar en genereer de
-               "Request Widget" / "Song Request" widget-code.
-            4. Vervang het onderstaande placeholder-blok door de <iframe>
-               die je daar krijgt.
+            SAM Broadcaster Cloud — Library widget (met "Allow request" aan)
+            Gegenereerd via SAM Cloud → Widgets → Web Widgets → type "Library".
+            Kleuren (theme=...) aangepast aan de site; alle andere instellingen
+            zijn precies zoals gegenereerd in het SAM Cloud dashboard.
           -->
-          <div class="player-fallback" id="request-placeholder" style="min-height: 420px; display: flex; align-items: center; justify-content: center;">
-            🎧 Hier komt de SAM Cloud verzoekjes-widget.<br />
-            Vervang dit blok door de embed-code uit je SAM Cloud
-            "Widgets"-paneel (Request Widget).
-          </div>
-          <!-- Voorbeeld, na het invullen van je eigen widget-URL:
-          <iframe
-            class="player-embed"
-            style="min-height: 620px;"
-            src="https://player.samcloud.com/embed/request/WIDGET-ID-HIER"
-            title="KM71 verzoekjes"
-            loading="lazy"
-          ></iframe>
-          -->
+          <sam-widget type="library" station-id="133256"
+            token="7a3a3dc457ba4f07a1c8f74d6f980ed7ffc5b91f"
+            playlist-id="undefined"
+            anim-type='focus-in-expand' easing='ease-in-out-back' refresh-interval='30s'
+            station-refresh-interval='default' theme-border-radius='rounded' image-border-radius='rounded'
+            theme='{"backgroundTop":"#241c13","backgroundBottom":"#1d1710","widgetBorder":"#382c1d","dividers":"#382c1d","buttons":"#e8a33d","text":"#f3ebdd"}'
+            show-buy-button='when populated' show-request-button='true'
+            show-cover-art='true' library-limit='5' nav-controls='all'>
+          </sam-widget>
         </div>
       </div>
     </section>
