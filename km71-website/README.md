@@ -46,9 +46,22 @@ inhoud staat in `index.html`.
 
 Zoek in `index.html` naar `[PLACEHOLDER: ...]` en vul aan:
 
-- **Over ons-sectie** (`id="page-over-ons"`) — het volledige verhaal achter de jukebox
 - **Contact-sectie** (`id="page-contact"`) — telefoonnummer, social media links
-- **assets/** — voeg een echt logo/foto toe indien gewenst
+
+## Foto's (nog te uploaden)
+
+`index.html` verwijst naar drie foto's die nog niet in `assets/` staan —
+zet ze daar met precies deze bestandsnamen, dan werkt alles automatisch:
+
+- `assets/jukebox.jpg` — de zwart-witfoto van de originele jukebox, gebruikt
+  in de hero van de homepage
+- `assets/km71-single.jpg` — de KM71-afbeelding met de Philips-single,
+  gebruikt bovenaan de "Over ons"-pagina
+- `assets/gitaar.jpg` — de gitaarfoto, gebruikt als sfeervolle achtergrond
+  achter de genre-tags op de homepage
+
+Zonder deze bestanden tonen de eerste twee een leeg/gebroken beeld-icoontje
+en mist de genre-sectie de achtergrondfoto (blijft verder gewoon werken).
 
 Het e-mailadres in de contact-sectie staat bewust *niet* als platte tekst in
 de HTML (tegen scrapers) maar wordt via een klein scriptje onderaan
