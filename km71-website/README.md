@@ -12,6 +12,17 @@ wat de audiospeler in de header steeds vernietigde — vandaar dat de muziek
 stopte bij het aanvragen van een nummer. Nu blijft de pagina (en dus de
 audiospeler) altijd hetzelfde, en wordt alleen de zichtbare sectie gewisseld.
 
+## Belangrijk bij het updaten van css/style.css, js/main.js of js/router.js
+
+Deze bestanden worden in `index.html` geladen met een `?v=2` achter de
+bestandsnaam (cache-busting) — Safari bleek deze bestanden hardnekkig te
+blijven cachen, zelfs na een harde refresh (Cmd+Shift+R), waardoor de
+paginawissel-knoppen niet meer werkten totdat de versie werd opgehoogd.
+**Verhoog dat versienummer (`?v=2` → `?v=3` enz.) telkens wanneer je
+`css/style.css`, `js/main.js` of `js/router.js` wijzigt**, anders lopen
+sommige bezoekers (vooral Safari-gebruikers) tegen een oude, gecachete
+versie aan.
+
 ## Bestanden
 
 ```
