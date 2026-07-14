@@ -10,6 +10,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Righteous&family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="css/style.css" />
+  <script type="module" src="//samcloudmedia.spacial.com/webwidgets/widget/v6/sam-widgets/sam-widgets.esm.js"></script>
 </head>
 <body>
   <header class="site-header">
@@ -55,15 +56,40 @@
             artwork? Genereer die dan onder Widgets in je SAM Cloud
             dashboard en vervang dit blok door die <iframe>-embedcode.
           -->
-          <audio class="player-embed" controls preload="none" style="width: 100%;">
+          <audio class="player-embed" controls autoplay preload="auto" style="width: 100%;">
             <source src="https://samcloud.spacial.com/api/listen?sid=133256&rid=280691&f=mp3,any&br=64000,any&t=ssl" type="audio/mpeg" />
             Je browser ondersteunt geen audio-element.
           </audio>
           <p style="text-align: center; margin: 0.75rem 0 0; font-size: 0.85rem; color: var(--muted);">
-            Speelt de speler hierboven niet af?
+            Speelt de speler hierboven niet vanzelf?
             <a href="https://samcloud.spacial.com/api/listen?sid=133256&rid=280691&f=mp3,any&br=64000,any&m=m3u&t=ssl">Open de stream direct</a>
-            (bijv. in VLC).
+            (bijv. in VLC), of klik op play — sommige browsers blokkeren
+            automatisch afspelen met geluid totdat je zelf interactie hebt gehad.
           </p>
+        </div>
+      </div>
+    </section>
+
+    <section id="historie">
+      <div class="container">
+        <div class="section-heading">
+          <span class="eyebrow">Draaide net</span>
+          <h2>Wat er al voorbij kwam</h2>
+        </div>
+        <div class="panel">
+          <!--
+            SAM Broadcaster Cloud — History widget
+            ----------------------------------------------------
+            Genereer in SAM Cloud: Widgets → Web Widgets → Add Widget →
+            Widget type "History". Stel kleuren/aantal items in en klik
+            "Generate Code". Vervang dit blok door de <sam-widget
+            type="history" ...> die je daar krijgt.
+          -->
+          <div class="player-fallback" id="history-placeholder">
+            🕓 Hier komt de afspeelhistorie.<br />
+            Vervang dit blok door de embed-code uit je SAM Cloud
+            "Web Widgets"-paneel (Widget type: History).
+          </div>
         </div>
       </div>
     </section>

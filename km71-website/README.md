@@ -18,40 +18,46 @@ km71-website/
 
 ## Wat je nog zelf moet invullen
 
-Deze site is met opzet gebouwd zonder aannames over dingen die ik niet kon
-verifiëren. Zoek in de bestanden naar `[PLACEHOLDER: ...]` en vul aan:
+Zoek in de bestanden naar `[PLACEHOLDER: ...]` en vul aan:
 
 - **over-ons.html** — het volledige verhaal achter de jukebox
-- **contact.html** — echt e-mailadres, telefoonnummer, social media links
+- **contact.html** — telefoonnummer, social media links
 - **assets/** — voeg een echt logo/foto toe indien gewenst
+
+Het e-mailadres in `contact.html` staat bewust *niet* als platte tekst in de
+HTML (tegen scrapers) maar wordt via een klein scriptje aan het eind van het
+bestand samengesteld. Wil je het adres wijzigen? Zoek in `contact.html` naar
+`var user = "mala";` en `var domain = "km71.nl";` en pas die twee regels aan.
 
 ## SAM Broadcaster Cloud koppelen
 
-**Live speler — al ingevuld.** `index.html` gebruikt nu de directe
-SAM Cloud stream-URL (station 133256, `rid=280691`) in een native
-HTML5 `<audio>`-element, met een fallback-link voor browsers die de
-stream niet inline afspelen. Test dit na het uploaden even in de browser.
-Wil je later liever de rijkere widget met songinfo/artwork? Log dan in
-op **https://samcloud.spacial.com**, ga naar **Widgets** in de sidebar,
-genereer de **Web Player**-widget en vervang het `<audio>`-blok in
-`index.html` door die `<iframe>`-code.
+**Live speler — ingevuld, incl. autoplay.** `index.html` gebruikt de directe
+SAM Cloud stream-URL (station 133256, `rid=280691`) in een native HTML5
+`<audio>`-element met het `autoplay`-attribuut, plus een fallback-link voor
+browsers die de stream niet inline afspelen. Let op: browsers (vooral Safari
+en Chrome op mobiel) blokkeren standaard geluid dat automatisch start zonder
+gebruikersinteractie — dat is bewust browserbeleid en niet te omzeilen vanuit
+de website zelf. Op sommige browsers/bij terugkerende bezoekers start het wel
+vanzelf; anders staat de play-knop gewoon klaar.
 
-**Verzoekjes-widget — nog te doen.** Deze kan ik niet voor je invullen,
-want dit vereist inloggen op jouw SAM Cloud account:
+**Verzoekjes-widget — ingevuld.** `verzoekjes.html` bevat de SAM Cloud
+**Library**-widget (met "Allow request" aan), zodat luisteraars door de hele
+bibliotheek kunnen bladeren en een nummer aanvragen. Vereist dat **Settings →
+Request Policy → "Enable requests from widgets"** aanstaat in je SAM Cloud
+dashboard.
+
+**Historie-widget — nog te doen.** Wil je op de homepage laten zien wat er
+al gedraaid heeft?
 
 1. Log in op **https://samcloud.spacial.com**.
-2. Ga naar **Settings → Request Policy** en vink **"Enable requests from
-   widgets"** aan (en optioneel "Allow listeners to dedicate requests",
-   plus een limiet op aantal aanvragen per luisteraar als je dat wilt).
-3. Ga naar de **Widgets**-tab in de sidebar (kan ook "Share" of "Embed"
-   heten).
-4. Genereer de **Request/Song Request**-widget en kopieer de `<iframe>`-code.
-   Plak die in `verzoekjes.html`, in het blok met het commentaar
-   `SAM Broadcaster Cloud — request/dedication widget` (vervangt het
-   `#request-placeholder`-blok).
-
-`verzoekjes.html` bevat al een voorbeeld-`<iframe>` in commentaar zodat je
-ziet waar de code moet komen.
+2. Ga naar **Widgets → Web Widgets → Add Widget**.
+3. Zet **Widget type** op **History**, stel kleuren/aantal items naar smaak
+   in, en klik **Generate Code**.
+4. Stuur mij de gegenereerde `<sam-widget type="history" ...>`-code, of plak
+   'm zelf in `index.html` in het blok met het commentaar
+   `SAM Broadcaster Cloud — History widget` (vervangt het
+   `#history-placeholder`-blok). De benodigde `<script>`-regel staat al in
+   de `<head>` van `index.html`.
 
 ## Lokaal testen
 
@@ -64,23 +70,25 @@ Open **http://localhost:8080**.
 
 ## Uploaden naar Hostinger
 
-Je site staat nu alleen op Hostinger (geen Git-koppeling), dus uploaden gaat
-via hPanel:
+De site staat live op **www.km71.nl**, geüpload naar
+`~/domains/km71.nl/public_html/` op de Hostinger-server via SSH:
 
-1. Log in op **hpanel.hostinger.com**.
-2. Ga naar **Websites → km71.nl → Bestandsbeheer (File Manager)**.
-3. Open de map `public_html`.
-4. **Maak eerst een backup** van de huidige inhoud (download of hernoem de
-   bestaande bestanden naar bijv. `public_html_oud`) voordat je iets
-   overschrijft.
-5. Upload alle bestanden uit deze `km71-website/` map naar `public_html`
-   (de inhoud van de map, niet de map zelf — `index.html` moet direct in
-   `public_html` staan).
-6. Open www.km71.nl in de browser en controleer of alles goed laadt,
-   inclusief de SAM Cloud widgets.
+```bash
+ssh -p 65002 GEBRUIKERSNAAM@HOSTNAAM
+cd ~/domains/km71.nl/public_html
+# bestanden uploaden/vervangen, bijv. via scp vanaf je Mac:
+# scp -P 65002 km71-website/index.html GEBRUIKERSNAAM@HOSTNAAM:~/domains/km71.nl/public_html/
+```
 
-Alternatief: gebruik de FTP-gegevens onder **Websites → km71.nl → FTP-accounts**
-met een FTP-client zoals FileZilla, als je liever niet via de browser upload.
+Belangrijk: nieuw geüploade bestanden moeten **644**-rechten hebben (mappen
+**755**), anders krijg je een 403 Forbidden — de webserver mag dan de
+bestanden niet lezen. Na uploaden zo nodig fixen:
+
+```bash
+chmod 644 *.html *.md
+find css js assets -type f -exec chmod 644 {} \;
+find css js assets -type d -exec chmod 755 {} \;
+```
 
 ## Design
 

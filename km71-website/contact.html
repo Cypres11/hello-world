@@ -40,13 +40,13 @@
     <section style="padding-top: 0;">
       <div class="container">
         <div class="notice">
-          [PLACEHOLDER: vul hieronder de echte contactgegevens in — e-mailadres,
-          eventueel telefoonnummer, en social media links.]
+          [PLACEHOLDER: eventueel een telefoonnummer en social media links
+          hieronder aanvullen.]
         </div>
         <ul class="contact-list">
           <li>
             <span class="label">E-mail</span>
-            <a href="mailto:info@km71.nl">info@km71.nl</a>
+            <span id="contact-email">e-mailadres laden…</span>
           </li>
           <li>
             <span class="label">Social media</span>
@@ -70,5 +70,19 @@
 
   <script src="js/main.js"></script>
   <script>document.getElementById("year").textContent = new Date().getFullYear();</script>
+  <script>
+    (function () {
+      // E-mailadres bewust niet als platte tekst in de HTML, zodat simpele
+      // scrapers het niet kunnen oppikken. Wijzig hier als het adres verandert.
+      var user = "mala";
+      var domain = "km71.nl";
+      var address = user + "@" + domain;
+      var el = document.getElementById("contact-email");
+      var link = document.createElement("a");
+      link.href = "mailto:" + address;
+      link.textContent = address;
+      el.replaceWith(link);
+    })();
+  </script>
 </body>
 </html>
