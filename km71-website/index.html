@@ -16,6 +16,12 @@
   <header class="site-header">
     <nav class="container nav">
       <a class="brand" href="index.html"><span class="dot"></span> KM71</a>
+      <div class="mini-player">
+        <audio controls autoplay preload="auto">
+          <source src="https://samcloud.spacial.com/api/listen?sid=133256&rid=280691&f=mp3,any&br=64000,any&t=ssl" type="audio/mpeg" />
+        </audio>
+        <span class="mini-player-label">● LIVE</span>
+      </div>
       <button class="nav-toggle" aria-label="Menu openen" aria-expanded="false">☰</button>
       <ul class="nav-links">
         <li><a href="index.html" aria-current="page">Home</a></li>
@@ -45,26 +51,17 @@
 
     <section id="luister">
       <div class="container">
-        <div class="panel player-panel">
-          <!--
-            SAM Broadcaster Cloud — livestream
-            ----------------------------------------------------
-            Directe stream-URL van SAM Cloud (station 133256). Werkt als
-            native HTML5-audiospeler; de link eronder is een fallback voor
-            browsers die de stream niet inline afspelen (bijv. open in VLC).
-            Wil je later de rijkere "Web Player"-widget met songinfo en
-            artwork? Genereer die dan onder Widgets in je SAM Cloud
-            dashboard en vervang dit blok door die <iframe>-embedcode.
-          -->
-          <audio class="player-embed" controls autoplay preload="auto" style="width: 100%;">
-            <source src="https://samcloud.spacial.com/api/listen?sid=133256&rid=280691&f=mp3,any&br=64000,any&t=ssl" type="audio/mpeg" />
-            Je browser ondersteunt geen audio-element.
-          </audio>
+        <div class="panel player-panel" style="text-align: center;">
+          <p style="margin: 0; color: var(--cream);">
+            🔊 De livestream speelt automatisch mee — overal op de site, via de
+            speler bovenin de menubalk.
+          </p>
           <p style="text-align: center; margin: 0.75rem 0 0; font-size: 0.85rem; color: var(--muted);">
-            Speelt de speler hierboven niet vanzelf?
+            Speelt 'm niet vanzelf?
             <a href="https://samcloud.spacial.com/api/listen?sid=133256&rid=280691&f=mp3,any&br=64000,any&m=m3u&t=ssl">Open de stream direct</a>
-            (bijv. in VLC), of klik op play — sommige browsers blokkeren
-            automatisch afspelen met geluid totdat je zelf interactie hebt gehad.
+            (bijv. in VLC), of klik op play in de menubalk — sommige browsers
+            blokkeren automatisch afspelen met geluid totdat je zelf interactie
+            hebt gehad.
           </p>
         </div>
       </div>

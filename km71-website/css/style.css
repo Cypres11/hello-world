@@ -57,6 +57,31 @@ img { max-width: 100%; display: block; }
   align-items: center;
   justify-content: space-between;
   padding: 0.9rem 0;
+  flex-wrap: wrap;
+  row-gap: 0.6rem;
+}
+
+.mini-player {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.mini-player audio {
+  height: 32px;
+  max-width: 200px;
+}
+
+.mini-player-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--gold);
+  letter-spacing: 0.08em;
+  white-space: nowrap;
+}
+
+@media (max-width: 720px) {
+  .mini-player audio { max-width: 150px; }
 }
 
 .brand {

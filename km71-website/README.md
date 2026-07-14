@@ -31,14 +31,24 @@ bestand samengesteld. Wil je het adres wijzigen? Zoek in `contact.html` naar
 
 ## SAM Broadcaster Cloud koppelen
 
-**Live speler — ingevuld, incl. autoplay.** `index.html` gebruikt de directe
-SAM Cloud stream-URL (station 133256, `rid=280691`) in een native HTML5
-`<audio>`-element met het `autoplay`-attribuut, plus een fallback-link voor
-browsers die de stream niet inline afspelen. Let op: browsers (vooral Safari
-en Chrome op mobiel) blokkeren standaard geluid dat automatisch start zonder
-gebruikersinteractie — dat is bewust browserbeleid en niet te omzeilen vanuit
-de website zelf. Op sommige browsers/bij terugkerende bezoekers start het wel
-vanzelf; anders staat de play-knop gewoon klaar.
+**Live speler — ingevuld, incl. autoplay, op elke pagina.** De speler staat
+niet meer alleen op de homepage, maar als compacte "mini-player" in de
+menubalk (`.mini-player`), aanwezig op alle vier de pagina's. Dat voorkomt dat
+het geluid stopt zodra iemand naar bijv. de verzoekjes-pagina navigeert —
+zonder dat blijft het echt een gewone meerdere-paginas-website, dus bij elke
+paginawissel herverbindt de speler wel opnieuw met de live-stream (goed voor
+~1 seconde onderbreking, onvermijdelijk bij een normale, niet-single-page
+website). Gebruikt de directe SAM Cloud stream-URL (station 133256,
+`rid=280691`) in een native HTML5 `<audio controls autoplay>`-element. Let
+op: browsers (vooral Safari en Chrome op mobiel) blokkeren standaard geluid
+dat automatisch start zonder gebruikersinteractie — dat is bewust
+browserbeleid en niet te omzeilen vanuit de website zelf. Op sommige
+browsers/bij terugkerende bezoekers start het wel vanzelf; anders staat de
+play-knop in de menubalk gewoon klaar.
+
+Wil je het adres van de stream ooit wijzigen? Het staat op 4 plekken (één
+per pagina, in de `.mini-player`) — zoek-en-vervang de URL in alle 4 de
+HTML-bestanden.
 
 **Verzoekjes-widget — ingevuld.** `verzoekjes.html` bevat de SAM Cloud
 **Library**-widget (met "Allow request" aan), zodat luisteraars door de hele
@@ -49,6 +59,19 @@ dashboard.
 **Historie-widget — ingevuld.** `index.html` toont onder "Draaide net" de
 SAM Cloud **History**-widget (laatste 6 nummers), met dezelfde kleuren als
 de rest van de site.
+
+**Wanneer een verzoek wordt afgespeeld — instelbaar in SAM Cloud, niet in de
+website.** Onder **Station Settings → Request Policy → Request Policy
+Rules** bepaal je hoe snel een aanvraag klinkt:
+
+- **Delay request … minutes before it becomes eligible for rotation** — hoe
+  lager dit getal, hoe eerder een verzoek uberhaupt in aanmerking komt.
+- **Move request to top of Queue** — kies deze optie (in plaats van "Leave
+  request in Request list") om een verzoek zo snel mogelijk, direct na het
+  lopende nummer, te laten spelen.
+
+Dit staat volledig los van de website — de widget stuurt alleen de aanvraag
+door, de SAM Cloud automation bepaalt wanneer 'm daadwerkelijk klinkt.
 
 ## Lokaal testen
 
