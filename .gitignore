@@ -2,3 +2,6 @@ __pycache__/
 *.pyc
 contacts.db
 .env
+
+# Moved to its own repository: github.com/Cypres11/km71
+km71-website/
