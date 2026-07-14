@@ -25,27 +25,32 @@ verifiëren. Zoek in de bestanden naar `[PLACEHOLDER: ...]` en vul aan:
 - **contact.html** — echt e-mailadres, telefoonnummer, social media links
 - **assets/** — voeg een echt logo/foto toe indien gewenst
 
-## SAM Broadcaster Cloud widgets inbouwen (verplichte stap)
+## SAM Broadcaster Cloud koppelen
 
-De site verwijst naar twee widgets die je zelf uit je SAM Cloud dashboard
-moet halen (station 133256) — ik heb geen toegang tot je SAM Cloud account,
-dus dit kan ik niet voor je invullen.
+**Live speler — al ingevuld.** `index.html` gebruikt nu de directe
+SAM Cloud stream-URL (station 133256, `rid=280691`) in een native
+HTML5 `<audio>`-element, met een fallback-link voor browsers die de
+stream niet inline afspelen. Test dit na het uploaden even in de browser.
+Wil je later liever de rijkere widget met songinfo/artwork? Log dan in
+op **https://samcloud.spacial.com**, ga naar **Widgets** in de sidebar,
+genereer de **Web Player**-widget en vervang het `<audio>`-blok in
+`index.html` door die `<iframe>`-code.
+
+**Verzoekjes-widget — nog te doen.** Deze kan ik niet voor je invullen,
+want dit vereist inloggen op jouw SAM Cloud account:
 
 1. Log in op **https://samcloud.spacial.com**.
 2. Ga naar **Settings → Request Policy** en vink **"Enable requests from
    widgets"** aan (en optioneel "Allow listeners to dedicate requests",
    plus een limiet op aantal aanvragen per luisteraar als je dat wilt).
-3. Ga naar de **Widgets**-tab in de sidebar.
-4. Genereer de **Web Player**-widget (voor de live stream) en kopieer de
-   `<iframe>`-code. Plak die in `index.html`, in het blok met het commentaar
-   `SAM Broadcaster Cloud — livestream player widget` (vervangt het
-   `#player-placeholder`-blok).
-5. Genereer de **Request/Song Request**-widget en kopieer die `<iframe>`-code.
+3. Ga naar de **Widgets**-tab in de sidebar (kan ook "Share" of "Embed"
+   heten).
+4. Genereer de **Request/Song Request**-widget en kopieer de `<iframe>`-code.
    Plak die in `verzoekjes.html`, in het blok met het commentaar
    `SAM Broadcaster Cloud — request/dedication widget` (vervangt het
    `#request-placeholder`-blok).
 
-Beide bestanden bevatten al een voorbeeld-`<iframe>` in commentaar zodat je
+`verzoekjes.html` bevat al een voorbeeld-`<iframe>` in commentaar zodat je
 ziet waar de code moet komen.
 
 ## Lokaal testen

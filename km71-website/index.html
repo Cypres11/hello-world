@@ -46,27 +46,24 @@
       <div class="container">
         <div class="panel player-panel">
           <!--
-            SAM Broadcaster Cloud — livestream player widget
+            SAM Broadcaster Cloud — livestream
             ----------------------------------------------------
-            Log in op https://samcloud.spacial.com, ga naar de sidebar
-            "Widgets" en genereer daar de "Web Player" widget-code voor
-            station 133256. Plak de <iframe> die je krijgt hieronder in
-            plaats van de placeholder-tekst.
+            Directe stream-URL van SAM Cloud (station 133256). Werkt als
+            native HTML5-audiospeler; de link eronder is een fallback voor
+            browsers die de stream niet inline afspelen (bijv. open in VLC).
+            Wil je later de rijkere "Web Player"-widget met songinfo en
+            artwork? Genereer die dan onder Widgets in je SAM Cloud
+            dashboard en vervang dit blok door die <iframe>-embedcode.
           -->
-          <div class="player-fallback" id="player-placeholder">
-            🔊 Hier komt de live SAM Cloud speler.<br />
-            Vervang dit blok door de embed-code uit je SAM Cloud
-            "Widgets"-paneel (Web Player).
-          </div>
-          <!-- Voorbeeld, na het invullen van je eigen widget-URL:
-          <iframe
-            class="player-embed"
-            src="https://player.samcloud.com/embed/PLAYER-ID-HIER"
-            title="KM71 live player"
-            allow="autoplay"
-            loading="lazy"
-          ></iframe>
-          -->
+          <audio class="player-embed" controls preload="none" style="width: 100%;">
+            <source src="https://samcloud.spacial.com/api/listen?sid=133256&rid=280691&f=mp3,any&br=64000,any&t=ssl" type="audio/mpeg" />
+            Je browser ondersteunt geen audio-element.
+          </audio>
+          <p style="text-align: center; margin: 0.75rem 0 0; font-size: 0.85rem; color: var(--muted);">
+            Speelt de speler hierboven niet af?
+            <a href="https://samcloud.spacial.com/api/listen?sid=133256&rid=280691&f=mp3,any&br=64000,any&m=m3u&t=ssl">Open de stream direct</a>
+            (bijv. in VLC).
+          </p>
         </div>
       </div>
     </section>
