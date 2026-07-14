@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Verzoekjes — KM71 Jukebox Radio</title>
+  <meta name="description" content="Vraag je favoriete nummer aan of draag 'm op bij KM71 Jukebox Radio." />
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Righteous&family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <header class="site-header">
+    <nav class="container nav">
+      <a class="brand" href="index.html"><span class="dot"></span> KM71</a>
+      <button class="nav-toggle" aria-label="Menu openen" aria-expanded="false">☰</button>
+      <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="verzoekjes.html" aria-current="page">Verzoekjes</a></li>
+        <li><a href="over-ons.html">Over ons</a></li>
+        <li><a href="contact.html">Contact</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero" style="padding-bottom: 1.5rem;">
+      <div class="container">
+        <span class="eyebrow">Verzoekjes &amp; opdrachten</span>
+        <h1>Zoek 'm op, <span>vraag 'm aan</span></h1>
+        <p class="lead">
+          Blader hieronder door de volledige KM71-bibliotheek. Vraag een nummer
+          aan voor jezelf, of draag het op aan iemand anders. Verzoekjes klinken
+          meestal binnen 2 uur op de radio.
+        </p>
+      </div>
+    </section>
+
+    <section style="padding-top: 0;">
+      <div class="container">
+        <div class="notice">
+          <strong>Let op:</strong> deze pagina toont de officiële SAM Broadcaster
+          Cloud request-widget. Zorg dat "Enable requests from widgets" aanstaat
+          onder <em>Settings → Request Policy</em> in je SAM Cloud dashboard,
+          anders werkt het aanvraagformulier hieronder niet.
+        </div>
+
+        <div class="panel">
+          <!--
+            SAM Broadcaster Cloud — request/dedication widget
+            ----------------------------------------------------
+            1. Log in op https://samcloud.spacial.com voor station 133256.
+            2. Ga naar Settings → Request Policy en vink "Enable requests
+               from widgets" aan (en eventueel "Allow listeners to dedicate
+               requests").
+            3. Ga naar de "Widgets"-tab in de sidebar en genereer de
+               "Request Widget" / "Song Request" widget-code.
+            4. Vervang het onderstaande placeholder-blok door de <iframe>
+               die je daar krijgt.
+          -->
+          <div class="player-fallback" id="request-placeholder" style="min-height: 420px; display: flex; align-items: center; justify-content: center;">
+            🎧 Hier komt de SAM Cloud verzoekjes-widget.<br />
+            Vervang dit blok door de embed-code uit je SAM Cloud
+            "Widgets"-paneel (Request Widget).
+          </div>
+          <!-- Voorbeeld, na het invullen van je eigen widget-URL:
+          <iframe
+            class="player-embed"
+            style="min-height: 620px;"
+            src="https://player.samcloud.com/embed/request/WIDGET-ID-HIER"
+            title="KM71 verzoekjes"
+            loading="lazy"
+          ></iframe>
+          -->
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="container">
+        <div class="section-heading">
+          <span class="eyebrow">Hoe werkt het</span>
+          <h2>In drie stappen</h2>
+        </div>
+        <div class="grid-3">
+          <div class="card">
+            <h3>1. Zoeken</h3>
+            <p>Blader of zoek in de widget naar het nummer of de artiest die je zoekt.</p>
+          </div>
+          <div class="card">
+            <h3>2. Aanvragen</h3>
+            <p>Klik op aanvragen en voeg eventueel een opdracht of groet toe.</p>
+          </div>
+          <div class="card">
+            <h3>3. Luisteren</h3>
+            <p>Zet de <a href="index.html#luister">live stream</a> aan — je verzoek klinkt meestal binnen 2 uur.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <span>© <span id="year"></span> KM71 Jukebox Radio</span>
+      <ul class="footer-links">
+        <li><a href="over-ons.html">Over ons</a></li>
+        <li><a href="verzoekjes.html">Verzoekjes</a></li>
+        <li><a href="contact.html">Contact</a></li>
+      </ul>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+  <script>document.getElementById("year").textContent = new Date().getFullYear();</script>
+</body>
+</html>

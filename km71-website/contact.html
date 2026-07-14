@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Contact — KM71 Jukebox Radio</title>
+  <meta name="description" content="Neem contact op met KM71 Jukebox Radio." />
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Righteous&family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <header class="site-header">
+    <nav class="container nav">
+      <a class="brand" href="index.html"><span class="dot"></span> KM71</a>
+      <button class="nav-toggle" aria-label="Menu openen" aria-expanded="false">☰</button>
+      <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="verzoekjes.html">Verzoekjes</a></li>
+        <li><a href="over-ons.html">Over ons</a></li>
+        <li><a href="contact.html" aria-current="page">Contact</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero" style="padding-bottom: 1.5rem;">
+      <div class="container">
+        <span class="eyebrow">Contact</span>
+        <h1>Vraag, tip of <span>samenwerking</span>?</h1>
+        <p class="lead">
+          Laat het ons weten — bijvoorbeeld voor een muzieksuggestie voor de
+          bibliotheek, een technisch probleem met de stream, of iets anders.
+        </p>
+      </div>
+    </section>
+
+    <section style="padding-top: 0;">
+      <div class="container">
+        <div class="notice">
+          [PLACEHOLDER: vul hieronder de echte contactgegevens in — e-mailadres,
+          eventueel telefoonnummer, en social media links.]
+        </div>
+        <ul class="contact-list">
+          <li>
+            <span class="label">E-mail</span>
+            <a href="mailto:info@km71.nl">info@km71.nl</a>
+          </li>
+          <li>
+            <span class="label">Social media</span>
+            [PLACEHOLDER: Facebook / Instagram links]
+          </li>
+        </ul>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <span>© <span id="year"></span> KM71 Jukebox Radio</span>
+      <ul class="footer-links">
+        <li><a href="over-ons.html">Over ons</a></li>
+        <li><a href="verzoekjes.html">Verzoekjes</a></li>
+        <li><a href="contact.html">Contact</a></li>
+      </ul>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+  <script>document.getElementById("year").textContent = new Date().getFullYear();</script>
+</body>
+</html>
