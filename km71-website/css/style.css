@@ -273,7 +273,7 @@ img { max-width: 100%; display: block; }
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg, rgba(20, 16, 12, 0.9), rgba(20, 16, 12, 0.96));
+  background: linear-gradient(180deg, rgba(20, 16, 12, 0.55), rgba(20, 16, 12, 0.8));
 }
 
 .ambient-bg > .container {
